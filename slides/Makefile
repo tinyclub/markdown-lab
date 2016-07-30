@@ -12,9 +12,9 @@ latex_colortheme=wolverine
 
 # Put and select the .jpg's in images/, without suffix
 # e.g. earth, white, darkgray; mx6, orange, black
-titlepage_wallpaper=earth
-titlepage_titlefg=white
-titlepage_authorfg=darkgray
+titlepage_wallpaper=mx6
+titlepage_titlefg=orange
+titlepage_authorfg=black
 
 # toc bg/fg
 toc_number_bg=white
