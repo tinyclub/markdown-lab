@@ -1,0 +1,60 @@
+body {
+    background: #FBFBFB;
+    color: #333;
+    font-family: Verdana, sans-serif;
+}
+
+#container {
+    margin: auto;
+    width: 7.5in;
+    padding: .5in;
+}
+
+#contact {
+    float: right;
+    text-align: right;
+}
+
+#contact p {
+    margin: .5em;
+}
+
+img {
+    padding: 4px;
+    border: 1px solid #ccc;
+    background: #fff;
+}
+
+a {
+    text-decoration: none;
+    color: #333;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+h1 {
+    margin-top: 0;
+}
+
+h2 {
+    margin-top: 0;
+}
+
+ul {
+    list-style-type: none;
+}
+
+ul li ul {
+    list-style-type: disc;
+    margin-bottom: 2em;
+}
+
+li {
+    margin-top: 0em;
+}
+
+ul li ul li {
+    margin: .5em;
+}

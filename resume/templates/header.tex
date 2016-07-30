@@ -1,0 +1,32 @@
+\usepackage[top=1in, bottom=1in, left=1in, right=1in]{geometry}
+\usepackage{tgpagella}
+\ifxetex
+  \usepackage{xeCJK}
+  \setCJKmainfont{AR PL KaitiM GB}   % 中文字体
+  \setmainfont[Mapping=tex-text]{AR PL SungtiL GB} % 英文字体
+  \setromanfont{Latin Modern Roman}
+  \setmonofont{Ubuntu Mono}
+\fi
+
+\usepackage{titlesec}
+\titleformat{\section}{\huge\bfseries}{\thesection}{1em}{}
+\titlespacing{\section}{0pt}{-2em}{1em}
+\titleformat{\subsection}{\large\bfseries\MakeUppercase}{\thesubsection}{1em}{}
+
+%\usepackage{multicol}
+\pagestyle{empty}
+\hyphenation{Media-Wiki}
+
+\renewcommand{\labelitemi}{}
+\renewcommand{\labelitemii}{\raise .5ex\hbox{\tiny$\blacktriangleright$}}
+
+% from http://tex.stackexchange.com/a/29796/16139
+\newsavebox{\zerobox}
+\newenvironment{nospace}
+  {\par\edef\theprevdepth{\the\prevdepth}\nointerlineskip
+   \setbox\zerobox=\vtop to 0pt\bgroup
+   \hrule height0pt\kern\dimexpr\baselineskip-\topskip\relax
+  }
+  {\par\vss\egroup\ht\zerobox=0pt \wd\zerobox=0pt \dp\zerobox=0pt
+   \box\zerobox}
+
