@@ -3,14 +3,16 @@
 mkdir -p /var/run/sshd
 
 # create an ubuntu user
-# PASS=`pwgen -c -n -1 10`
-PASS=ubuntu
-# echo "Username: ubuntu Password: $PASS"
+PASS=`pwgen -c -n -1 10`
+echo "Username: ubuntu Password: $PASS"
 id -u ubuntu &>/dev/null || useradd --create-home --shell /bin/bash --user-group --groups adm,sudo ubuntu
 
 sudo mkdir /home/ubuntu/Desktop/
 sudo cp /markdown-lab.desktop /home/ubuntu/Desktop/
 sudo chown ubuntu:ubuntu -R /home/ubuntu/
+
+sudo -u ubuntu mkdir /home/ubuntu/.vnc/
+sudo -u ubuntu x11vnc -storepasswd $PASS /home/ubuntu/.vnc/passwd
 
 echo "ubuntu:$PASS" | chpasswd
 sudo -u ubuntu -i bash -c "mkdir -p /home/ubuntu/.config/pcmanfm/LXDE/ \

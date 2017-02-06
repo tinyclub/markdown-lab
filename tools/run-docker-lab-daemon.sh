@@ -26,9 +26,12 @@ CONTAINER_ID=$(docker run --privileged \
                 -v $local_lab_dir:$remote_lab_dir \
                 $IMAGE)
 
-docker logs $CONTAINER_ID | sed -n 1p
+echo "Wait for lab launching..."
+sleep 5
+
+pwd=`docker logs $CONTAINER_ID 2>/dev/null | grep Password | sed -e "s/.* Password: \(.*\)$/\1/g"`
 
 echo $local_port > $TOP_DIR/.lab_local_port
-echo "Usage: Please open $url with password: $pwd"
+echo $pwd > $TOP_DIR/.lab_login_pwd
 
 $TOP_DIR/open-docker-lab.sh
