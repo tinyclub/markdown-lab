@@ -1,5 +1,5 @@
-% Ftrace 实现原理和开发实践
-% 吴章金 @ 魅族科技
+% Ftrace 实现原理与开发实践
+% 吴章金, MIPS Ftrace Author，MEIZU
 % \today
 
 # 什么是 Ftrace
@@ -183,7 +183,7 @@ $ systrace.py --time=10 -o trace.html sched gfx view wm
 
 ## Graphic perf tuning (Cont.)
 
-\ThisCenterWallPaper{1.45}{images/systrace-graphic}
+\ThisCenterWallPaper{1.3}{images/systrace-graphic}
 
 ## Thermal tracing for board temprature control
 
@@ -344,7 +344,8 @@ this.thermalTemperatureSlice(ts, name, thermalTemperature);
 
 * [KFT](http://elinux.org/Using_Kernel_Function_Trace)
 * [Ftrace](http://www.ibm.com/developerworks/cn/linux/l-cn-ftrace/index.html)
-* [Trace-cmd/Kernelshark](https://lwn.net/Articles/410200/)
+* [Trace-cmd](https://lwn.net/Articles/410200/)
+* [Kernelshark](http://people.redhat.com/srostedt/kernelshark/HTML/)
 * [Pytimerchart](http://packages.python.org/pytimechart/userguide.html)
 * [Systrace](https://developer.android.com/studio/profile/systrace.html)
 * [Kprobes](http://www-users.cs.umn.edu/~boutcher/kprobes/)

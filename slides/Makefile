@@ -8,19 +8,19 @@ latex_theme=Darmstadt
 
 # colortheme: beaver,crane,dolphin,dove,fly,lily
 # monarca,seagull,seahorse,spruce,wolverine
-latex_colortheme=wolverine
+latex_colortheme=seahorse
 
 # Put and select the .jpg's in images/, without suffix
 # e.g. earth, white, darkgray; mx6, orange, black
-titlepage_wallpaper=earth
-titlepage_titlefg=white
-titlepage_authorfg=darkgray
+titlepage_wallpaper=linux-desktop
+titlepage_titlefg=yellow
+titlepage_authorfg=white
 
 # toc bg/fg
 toc_number_bg=white
 toc_number_fg=violet
 toc_section_bg=white
-toc_section_fg=orange
+toc_section_fg=blue
 
 latex_fontsize=9pt
 latex_template=./templates/zh_template.tex

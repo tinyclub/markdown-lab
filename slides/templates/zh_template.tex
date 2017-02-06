@@ -26,10 +26,10 @@ $endif$
 \usepackage{fixltx2e} % provides \textsubscript
 \ifxetex
   \usepackage{xeCJK}                 % 设置中英文字体
-  \setCJKmainfont{AR PL KaitiM GB}   % 中文字体
+  \setCJKmainfont{AR PL SungtiL GB}   % 中文字体
   \setmainfont{AR PL SungtiL GB}     % 英文字体
-%  \setromanfont{Latin Modern Roman}
-%  \setmonofont{Ubuntu Mono}
+  %\setromanfont{DejaVu Sans Mono}
+  %\setmonofont{DejaVu Sans Mono}
   \linespread{1.2}\selectfont        % 行距
   \XeTeXlinebreaklocale "zh"         % 中文自动换行
   \XeTeXlinebreakskip = 0pt plus 1pt % 字之间加0pt至1pt间距
@@ -131,7 +131,7 @@ $endif$
 $if(title)$
 \begin{frame}[plain]
 $if(titlepage_wallpaper)$
-\ThisCenterWallPaper{1.45}{images/$titlepage_wallpaper$}
+\ThisCenterWallPaper{1.35}{images/$titlepage_wallpaper$}
 $endif$
 % Insert background picture for titlepage
 %\titlepage
@@ -141,7 +141,7 @@ $endif$
     $if(titlepage_titlefg)$
     \setbeamercolor{mytitle}{fg=$titlepage_titlefg$,bg=}
     $endif$
-    \begin{beamercolorbox}[sep=8pt,center]{mytitle}
+    \begin{beamercolorbox}[sep=8pt]{mytitle}
       \Huge{\inserttitle}\par
     \end{beamercolorbox}
     \vskip2.2cm\par
