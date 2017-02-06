@@ -66,6 +66,7 @@ RUN chmod 440 /etc/sudoers.d/ubuntu
 ADD autostart /etc/xdg/lxsession/LXDE/autostart
 ADD lab.desktop /
 ADD help.desktop /
+ADD demo.desktop /
 ADD startup.sh /
 
 # Add lab-name
