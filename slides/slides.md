@@ -18,7 +18,7 @@
 
 以 MIPS 为例：`arch/mips/kernel/mcount.S`
 
-* KFT: `gcc -pg`
+* Ftrace: `gcc -pg`
 
 ```
     $ echo 'main(){}' | \
@@ -27,7 +27,7 @@
 	jal	_mcount
 ```
 
-* Ftrace: `gcc -finstrument-functions`
+* KFT: `gcc -finstrument-functions`
 
 ```
     $ echo 'main(){}' | \
@@ -62,17 +62,17 @@
         * 然后调用 `ftrace_return_to_handler`，并模拟exit：`ftrace_pop_return_trace`
         * 恢复原来的返回地址并跳回
 
-## High resolution trace clock: `sched_clock`
+## High resolution trace clock: `sched_clock()`
 
-* `sched_clock` 要求
-    * 高精度：`us/ns`
-        * `kernel/sched_clock.c` 定义的 `sched_clock` 基于 `jiffies`，精度不够
-    * 快速高效
-        * 无锁，直接读硬件计数器，X86：`rdtsc/rdtscll`，MIPS: `read_c0_count()`
-        * `Cycles` 转 `ns` 算法优化：`arch/x86/include/asm/timer.h`
-    * 不能溢出
-        * 32 位转 64 位：`include/linux/cnt32_to_63.h: cnt32_to_63()`
-
+* 高精度：`us/ns`
+    * `kernel/sched_clock.c` 定义的 `sched_clock()` 基于 `jiffies`，精度不够
+* 快速高效
+    * 无锁，直接读硬件计数器，X86：`rdtsc/rdtscll`，MIPS: `read_c0_count()`
+    * `Cycles` 转 `ns` 算法优化：`arch/x86/include/asm/timer.h`
+* 不能溢出
+    * 32 位转 64 位：`include/linux/cnt32_to_63.h: cnt32_to_63()`
+* 稳定性
+    * 计数频率要求稳定，如果 clock 跟处理器频率关联，需要关闭 cpufreq
 * notrace: `__attribute__((no_instrument_function))`
     * 不能跟踪，否则会死循环
     * `_mcount() -> sched_clock() -> _mcount()`
@@ -101,6 +101,24 @@
 
 # Ftrace 开发实践
 
+## Filesystem tracing for broken symlink
+
+* 问题：F2FS 某个符号链接偶尔创建异常导致系统启动失败
+    * 符号链接文件存在，但是指向为空
+* 排查：排查是所有链接异常还是单一情况
+    * 通过 `trace_printk` 跟踪并经 `/sys/kernel/debug/tracing/trace` 查看
+    * fs/f2fs/namei.c:
+```
+    err = f2fs_add_link(dentry, inode);
+    if (err)
+        goto out;
+    trace_printk("dir ino %ld, target name %s, sym name %s.\n", \
+        dir->i_ino, dentry->d_name.name, symname);
+    f2fs_unlock_op(sbi);
+```
+* 结论：发现其他符号链接创建正常
+* 根源：异常掉电导致符号链接创建不完整并且无 f2fsck 无覆盖此类情况
+
 ## Latency v.s. throughput
 
 * Latency tracing
@@ -119,8 +137,8 @@
 
 * Latency 消失，但造成 Throughput 衰退
     * 发现 RNDIS 下降明显
-    * 线程化前：91／72
-    * 线程化后：45／39
+    * iperf 线程化前：91／72
+    * iperf 线程化后：45／39
 
 ## Home Idle tracing for power jitter
 
@@ -143,24 +161,6 @@ $ cat /sys/kernel/debug/tracing/trace
 ## Home idle tracing (Cont.)
 
 \ThisCenterWallPaper{1}{images/oscilloscope}
-
-## Filesystem tracing for broken symlink
-
-* 问题：F2FS 某个符号链接偶尔创建异常导致系统启动失败
-    * 符号链接文件存在，但是指向为空
-* 排查：排查是所有链接异常还是单一情况
-    * 通过 `trace_printk` 跟踪并经 `/sys/kernel/debug/tracing/trace` 查看
-    * fs/f2fs/namei.c:
-```
-    err = f2fs_add_link(dentry, inode);
-    if (err)
-        goto out;
-    trace_printk("dir ino %ld, target name %s, sym name %s.\n", \
-        dir->i_ino, dentry->d_name.name, symname);
-    f2fs_unlock_op(sbi);
-```
-* 结论：发现其他符号链接创建正常
-* 根源：异常掉电导致符号链接创建不完整并且无 f2fsck 无覆盖此类情况
 
 ## Graphic tracing for display performance tuning
 
