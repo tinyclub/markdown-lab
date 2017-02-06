@@ -13,8 +13,8 @@ This lab aims to easier the building of the markdown environment for slides, boo
 To install the necessary tools, try `tools/install-local-lab.sh` for local
 machine and `tools/install-docker-lab.sh` for virtual machine.
 
-For docker machine, need to open it with `tools/run-docker-lab-daemon.sh` and
-login `http://localhost:6080/vnc.html` in with `ubuntu` password.
+For docker machine, need to open it with `tools/run-docker-lab-daemon.sh` or
+`tools/open-docker-lab.sh` and login the VNC page with `ubuntu` password.
 
 ## Slides
 
