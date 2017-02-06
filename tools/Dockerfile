@@ -2,11 +2,22 @@
 FROM dorowu/ubuntu-desktop-lxde-vnc
 MAINTAINER Falcon wuzhangjin@gmail.com
 
-RUN sed -i -e "s/archive.ubuntu.com/cn.archive.ubuntu.com/g" /etc/apt/sources.list
+RUN sed -i -e "s%/archive.ubuntu.com%/cn.archive.ubuntu.com%g" /etc/apt/sources.list
 
 RUN apt-get -y update
 
-RUN apt-get install -y vim git ca-certificates
+RUN apt-get install -y chromium-browser
+
+RUN apt-get install -y ruby
+RUN gem sources -r http://rubygems.org/
+RUN gem sources -r https://rubygems.org/
+RUN gem sources -a https://ruby.taobao.org/
+
+RUN gem install showterm
+
+RUN apt-get install -y vim
+
+RUN apt-get install -y git ca-certificates
 
 # For Slides, Resume and Article
 RUN apt-get install -y pandoc
@@ -24,7 +35,6 @@ RUN apt-get install -y ttf-wqy-microhei ttf-wqy-zenhei #ttf-mscorefonts-installe
 # For gitbook
 
 RUN apt-get install -y nodejs npm
-RUN apt-get -y update
 RUN apt-get install -y calibre
 
 RUN npm config set registry https://registry.npm.taobao.org
@@ -41,15 +51,6 @@ RUN npm install gitbook-plugin-maxiang -g
 RUN npm install gitbook-plugin-multipart -g
 
 # RUN gitbook fetch latest
-
-RUN apt-get install -y ruby
-RUN gem sources -r http://rubygems.org/
-RUN gem sources -r https://rubygems.org/
-RUN gem sources -a https://ruby.taobao.org/
-
-RUN gem install showterm
-
-RUN apt-get install -y chromium-browser
 
 # Chinese support
 RUN apt-get install -y ibus ibus-sunpinyin dbus-x11
