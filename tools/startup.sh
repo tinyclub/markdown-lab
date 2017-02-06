@@ -2,9 +2,16 @@
 
 mkdir -p /var/run/sshd
 
+IMAGE=$(< /lab-name)
+LAB_TOOLS=/`basename ${IMAGE}`/tools/
+
 # create an ubuntu user
-UNIX_PASS=`pwgen -c -n -1 10`
-VNC_PASS=`pwgen -c -n -1 10`
+
+UNIX_PASS=$(< $LAB_TOOLS/.lab_unix_pwd)
+VNC_PASS=$(< $LAB_TOOLS/.lab_login_pwd)
+
+[ -z "$UNIX_PASS" ] && UNIX_PASS=`pwgen -c -n -1 10` && echo $UNIX_PASS > $LAB_TOOLS/.lab_unix_pwd && chmod a+w $LAB_TOOLS/.lab_unix_pwd
+[ -z "$VNC_PASS" ] && VNC_PASS=`pwgen -c -n -1 10` && echo $VNC_PASS > $LAB_TOOLS/.lab_login_pwd && chmod a+w $LAB_TOOLS/.lab_login_pwd
 echo "Username: ubuntu Password: $UNIX_PASS VNC-Password: $VNC_PASS"
 id -u ubuntu &>/dev/null || useradd --create-home --shell /bin/bash --user-group --groups adm,sudo ubuntu
 

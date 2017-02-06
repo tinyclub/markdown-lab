@@ -50,6 +50,9 @@ RUN chmod 440 /etc/sudoers.d/ubuntu
 ADD markdown-lab.desktop /
 ADD startup.sh /
 
+# Add lab-name
+ADD lab-name /
+
 # Tune the screen size
 ADD supervisord.conf /etc/supervisor/conf.d/
 
