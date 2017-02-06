@@ -7,7 +7,9 @@ TOP_DIR=$(dirname `readlink -f $0`)
 
 IMAGE=$(< $TOP_DIR/lab-name)
 
-lab_host=$(< $TOP_DIR/lab-host)
+LAB_HOST_NAME=$TOP_DIR/.lab_host_name
+
+lab_host=$(< $LAB_HOST_NAME)
 lab_name=`basename $IMAGE`
 
 LAB_LOCAL_PORT=$TOP_DIR/.lab_local_port

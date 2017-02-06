@@ -13,6 +13,8 @@ LAB_TOOLS=/$LAB_NAME/tools/
 LAB_UNIX_PWD=$LAB_TOOLS/.lab_unix_pwd
 LAB_UNIX_UID=$LAB_TOOLS/.lab_unix_uid
 LAB_VNC_PWD=$LAB_TOOLS/.lab_login_pwd
+LAB_VNC_IDENTIFY=$LAB_TOOLS/.lab_identify_method
+LAB_HOST_NAME=$LAB_TOOLS/.lab_host_name
 
 UNIX_UID=$(< $LAB_UNIX_UID)
 [ -z "$UNIX_UID" ] && UNIX_UID=1000 && echo $UNIX_UID > $LAB_UNIX_UID
@@ -49,6 +51,15 @@ sudo -u ubuntu -i bash -c "mkdir -p $HOME/.config/pcmanfm/LXDE/ \
 
 cd /web && ./run.py > /var/log/web.log 2>&1 &
 nginx -c /etc/nginx/nginx.conf
+
+if [ -f $LAB_VNC_IDENTIFY ]; then
+    VNC_IDENTIFY=$(< $LAB_VNC_IDENTIFY)
+    HOST_NAME="localhost"
+    [ -f $LAB_HOST_NAME ] && HOST_NAME=$(< $LAB_HOST_NAME)
+    if [ "$VNC_IDENTIFY" != "password" -a "$HOST_NAME" == "localhost" ]; then
+	sed -i -e "s% -rfbauth /home/.*$%%g" /etc/supervisor/conf.d/supervisord.conf
+    fi
+fi
 
 if [ -f /bin/tini ]; then
 	exec /bin/tini -- /usr/bin/supervisord -n
