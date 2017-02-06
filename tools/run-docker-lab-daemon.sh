@@ -12,7 +12,29 @@ remote_lab_dir=/`basename ${IMAGE}`/
 
 browser=chromium-browser
 remote_port=6080
-local_port=$((RANDOM/500+6080))
+
+while :;
+do
+    retry=0
+    local_port=$((RANDOM/500+6080))
+    echo "new vnc port: $local_port"
+
+    # Make sure it is unique
+    ports=`docker ps -a | grep -v PORTS | cut -d':' -f2 | cut -d'-' -f1 | grep "[0-9]*" | tr '\n' ' '`
+    echo "old vnc ports: $ports"
+
+    for port in $ports
+    do
+	if [ $local_port -eq $port ]; then
+		retry=1
+		break
+	fi
+    done
+
+    [ $retry -eq 0 ] && break
+    echo "Retry $retry times to generate a random and unique port"
+done
+
 url=http://localhost:$local_port/vnc.html
 pwd=ubuntu
 
