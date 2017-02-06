@@ -35,7 +35,7 @@ clean:
 	$(RM) *.html *.pdf
 
 read: $(PDFS)
-	firefox $^ 2>&1 > /dev/null &
+	(chromium-browser $^ 2>&1 > /dev/null &) 2>&1 >/dev/null
 
 read-html: $(HTML)
-	firefox $^ 2>&1 > /dev/null &
+	(chromium-browser $^ 2>&1 > /dev/null &) 2>&1 >/dev/null
