@@ -5,4 +5,4 @@
 
 TOP_DIR=$(dirname `readlink -f $0`)
 
-cat ${TOP_DIR}/Dockerfile  | grep "^RUN apt-get" | cut -d' ' -f2- | sudo bash
+cat ${TOP_DIR}/Dockerfile  | grep "^RUN " | cut -d' ' -f2- | sudo bash
