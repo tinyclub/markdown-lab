@@ -1,5 +1,5 @@
 % Ftrace 实现原理与开发实践
-% 吴章金, MIPS Ftrace Author，MEIZU
+% 吴章金, MIPS Ftrace Author, http://kernel.MEIZU.com
 % \today
 
 # 什么是 Ftrace
@@ -79,12 +79,13 @@
 
 ## User space tracing
 
-* 可通过 `trace_marker` 模拟实现应用程序跟踪
-* 实例：Systrace
-    * atrace_init_once()
-        * `atrace_marker_fd = open("/sys/kernel/debug/tracing/trace_marker", O_WRONLY);`
+* 可通过 `trace_marker` 模拟实现用户态函数跟踪
+* Systrace 实现
     * Java: `Trace.traceBegin(tag, name)/Trace.traceEnd(tag)`
     * Native: `ATRACE_BEGIN(name)/ATRACE_END()`
+* 实现原理
+    * atrace_init_once()
+        * `atrace_marker_fd = open("/sys/kernel/debug/tracing/trace_marker", O_WRONLY);`
     * `ATRACE_BEGIN(name)`
         * `snprintf(buf, ATRACE_MESSAGE_LENGTH, "B|%d|%s", getpid(), name);`
         * `write(atrace_marker_fd, buf, len);`
@@ -112,8 +113,7 @@
     err = f2fs_add_link(dentry, inode);
     if (err)
         goto out;
-    trace_printk("dir ino %ld, target name %s, sym name %s.\n", \
-        dir->i_ino, dentry->d_name.name, symname);
+    trace_printk("dir ino %ld, target name %s, sym name %s.\n", dir->i_ino, dentry->d_name.name, symname);
     f2fs_unlock_op(sbi);
 ```
 * 结论：发现其他符号链接创建正常
@@ -142,6 +142,10 @@
 
 ## Home Idle tracing for power jitter
 
+\ThisCenterWallPaper{1}{images/power-supply}
+
+## Home idle tracing (Cont.)
+
 * top: process level
 * perf top: function level
 * Ftrace workqueue event tracer: workqueue function level
@@ -149,14 +153,10 @@
 $ echo workqueue:workqueue_queue_work > /sys/kernel/debug/tracing/set_event
 $ cat /sys/kernel/debug/tracing/trace
 ```
-* 实时监测数据流与快捷捕获后台数据
+* 实时渲染数据流 + 快捷捕获后台执行环境
     * 软件示波器：[oscilloscope](https://github.com/tinyclub/tinydraw/raw/master/oscope/oscilloscope.py)
     * 快捷按键捕获后台数据
     * 根据某个触发条件自动捕获：Max, Avg
-
-## Home idle tracing (Cont.)
-
-\ThisCenterWallPaper{1}{images/power-supply}
 
 ## Home idle tracing (Cont.)
 
@@ -167,47 +167,50 @@ $ cat /sys/kernel/debug/tracing/trace
 * 从应用层加跟踪点
 
 ```
-Trace.traceBegin(Trace.TRACE_TAG_VIEW, "performaTraversals");
-performTraversals();
-Trace.traceEnd(Trace.TRACE_TAG_VIEW);
+     + Trace.traceBegin(Trace.TRACE_TAG_VIEW, "performaTraversals");
+      performTraversals();
+    + Trace.traceEnd(Trace.TRACE_TAG_VIEW);
 ```
 
 * 通过 Systrace 启动跟踪
 
 ```
-$ systrace.py --time=10 -o trace.html sched gfx view wm
+    $ systrace.py --time=10 -o trace.html gfx sched view wm
 ```
 
 * 分析跟踪结果
     * 通过 Chrome 浏览器解析 `trace.html`
 
-## Graphic perf tuning (Cont.)
+## Graphic tracing (Cont.)
 
 \ThisCenterWallPaper{1.3}{images/systrace-graphic}
 
 ## Thermal tracing for board temprature control
 
+\ThisCenterWallPaper{1}{images/temp-meature}
+
+## Thermal tracing (Cont.)
+
 * 从内核中定义跟踪点（tracepoints）
     * `include/trace/events/thermal.h`
 ```
-    TRACE_EVENT(thermal_temperature,
-        ...
-        TP_printk("thermal_zone=%s id=%d temp_prev=%d temp=%d",
-            __get_str(thermal_zone), __entry->id, __entry->temp_prev,
-            __entry->temp)
-);
+      TRACE_EVENT(thermal_temperature,
+      ...
+      TP_printk("thermal_zone=%s id=%d temp_prev=%d temp=%d",
+      __get_str(thermal_zone), __entry->id, __entry->temp_prev,
+      __entry->temp));
 ```
 
 * 从内核中调用跟踪点
     * `driver/thermal/thermal_core.c: update_temperature()`
 ```
-    trace_thermal_temperature(tz);
+      trace_thermal_temperature(tz);
 ```
 
 * Systrace 工作目标
 
 ```   
-$ systrace.py --time=10 -o trace.html temp sched gfx
+    $ systrace.py --time=10 -o trace.html temp sched gfx
 ```
 
 ## Thermal tracing (Cont.)
@@ -215,8 +218,8 @@ $ systrace.py --time=10 -o trace.html temp sched gfx
 * 在 atrace 中启用该事件
     * `frameworks/native/cmds/atrace/atrace.cpp: k_categories`
 ```
-{ "temp", "Thermal temperature", 0, {
-{ REQ, "/sys/kernel/debug/tracing/events/thermal/thermal_temperature/enable" },}},
+      {"temp","Thermal temperature",0,{
+      {REQ,"/sys/kernel/debug/tracing/events/thermal/thermal_temperature/enable" },}},
 ```
 
 * 在 Systrace 中解析
@@ -225,20 +228,20 @@ $ systrace.py --time=10 -o trace.html temp sched gfx
         * 或添加独立的解析文件 `thermal_parser.html` 并追加到 `ftrace_importer.html`
         * `thermalTemperatureEvent: function()`:`
 ```
-// js 正则表达式提取 ftrace thermal 相关数据
-var event = /thermal_zone=(.+) id=(\d) temp_prev=(\d+) temp=(\d+)/.exec(eventBase.details);
-// 拿到thermal zone 名字
-var name = event[1];
-// 拿到温度
-var thermalTemperature = parseInt(event[4]);
-// 调用 Systrace 框架提供的显示函数画出温度曲线；
-this.thermalTemperatureSlice(ts, name, thermalTemperature);
+    // js 正则表达式提取 ftrace thermal 相关数据
+    var event = /thermal_zone=(.+) id=(\d) temp_prev=(\d+) temp=(\d+)/.exec(eventBase.details);
+    // 拿到 thermal zone 名字
+    var name = event[1];
+    // 拿到温度
+    var thermalTemperature = parseInt(event[4]);
+    // 调用 Systrace 框架提供的显示函数画出温度曲线；
+    this.thermalTemperatureSlice(ts, name, thermalTemperature);
 ```
     * 并绑定上述事件到解析代码
         * `function ThermalParser(importer)`
 ```
-  importer.registerEventHandler('thermal_temperature',
-    ThermalParser.prototype.thermalTemperatureEvent.bind(this));
+      importer.registerEventHandler('thermal_temperature',
+      ThermalParser.prototype.thermalTemperatureEvent.bind(this));
 ```
 
 ## Thermal tracing (Cont.)
@@ -252,12 +255,13 @@ this.thermalTemperatureSlice(ts, name, thermalTemperature);
 * 基于 Qemu 的嵌入式 Linux 开发环境
 * 首页：<http://tinylab.org/linux-lab>
 * 仓库：<https://github.com/tinyclub/linux-lab>
+* 访问：http://novnc-server:novnc-port/vnc.html
 * 特性
     * Docker 容器化
     * 可通过 Web 访问的 LXDE Desktop（基于noVNC）
     * 预安装 4 大架构的交叉编译器
     * 集成 Uboot, Linux Kernel, Buildroot
-    * 支持大量 Qemu 虚拟的开发板
+    * 支持大量 Qemu 虚拟的开发板（免费）
     * 灵活配置、编译和引导
 
 ## Linux Lab 介绍（Cont.）
