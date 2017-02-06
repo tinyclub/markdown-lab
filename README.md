@@ -20,7 +20,7 @@ This lab aims to easier the building of the markdown environment for slides, boo
     $ tools/docker/identify
     $ tools/docker/run
 
-Login the VNC page with `ubuntu` password.
+Login the VNC page with the password printed in the console.
 
 ## Slides
 
