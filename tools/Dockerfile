@@ -39,7 +39,7 @@ RUN npm install gitbook-plugin-collapsible-menu -g
 RUN npm install gitbook-plugin-maxiang -g
 RUN npm install gitbook-plugin-multipart -g
 
-# RUN gitbook fetch latest
+RUN gitbook fetch latest
 
 WORKDIR /markdown-lab/
 
