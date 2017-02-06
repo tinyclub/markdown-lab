@@ -14,10 +14,14 @@ pdf:   clean $(PDFS)
 html:  clean $(HTML)
 
 %.html: %.md
-	python resume.py html $(GRAVATAR_OPTION) < $< | pandoc -t html -c $(HTML_CSS) -o $@
+	python resume.py html $(GRAVATAR_OPTION) < $< \
+	  | pandoc -t html -c $(HTML_CSS) -o $@
 
 %.pdf:  %.md $(LATEX_TEMPLATE)
-	python resume.py tex < $< | pandoc --latex-engine=xelatex --template=$(LATEX_TEMPLATE) -H $(LATEX_HEADER) -o $@
+	python resume.py tex < $< \
+	  | pandoc --latex-engine=xelatex \
+	      --template=$(LATEX_TEMPLATE) \
+	      -H $(LATEX_HEADER) -o $@
 
 ifeq ($(OS),Windows_NT)
   # on Windows

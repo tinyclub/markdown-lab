@@ -4,7 +4,7 @@ Markdown Resumé
 ![GRAVATAR](images/gravatar.jpg)
 <wuzhangjin@gmail.com>
 [Download Markdown Source](https://raw.github.com/tinyclub/markdown-lab/master/resume/resume_en.md)
-<http://github.com/tinyclub/markdown-lab/resume/>
+<http://github.com/tinyclub/markdown-lab/>
 
 Interests
 ---------

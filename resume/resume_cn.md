@@ -4,7 +4,7 @@ Markdown 中文简历
 ![GRAVATAR](images/gravatar.jpg)
 <wuzhangjin@gmail.com>
 [下载中文简历源码](https://raw.github.com/mwhite/resume/master/resume_cn.md)
-<http://github.com/tinyclub/markdown-lab/resume/>
+<http://github.com/tinyclub/markdown-lab/>
 
 兴趣爱好
 --------
