@@ -11,6 +11,8 @@ LAB_HOST_TOOL=$TOP_DIR/run-local-host.sh
 LAB_CAPS=$TOP_DIR/lab-caps
 LAB_DEVICES=$TOP_DIR/lab-devices
 LAB_LIMITS=$TOP_DIR/lab-limits
+LAB_PORTMAP=$TOP_DIR/lab-portmap
+LAB_VOLUMEMAP=$TOP_DIR/lab-volumemap
 
 lab_name=`basename ${IMAGE}`
 local_lab_dir=`dirname $TOP_DIR`
@@ -83,21 +85,39 @@ if [ -f $LAB_DEVICES  ]; then
   done
 fi
 
+lab_portmap="-p $local_port:$remote_port"
+
+if [ -f $LAB_PORTMAP  ]; then
+  for portmap in $(< $LAB_PORTMAP)
+  do
+    lab_portmap="$lab_portmap -p $portmap"
+  done
+fi
+
+lab_volumemap="-v $local_lab_dir:$remote_lab_dir"
+if [ -f $LAB_VOLUMEMAP  ]; then
+  for volumemap in $(< $LAB_VOLUMEMAP)
+  do
+    lab_volumemap="$lab_volumemap -v $volumemap"
+  done
+fi
+
 [ -f $LAB_LIMITS ] && lab_limits=$(< $LAB_LIMITS)
 
 container_name=${lab_name}-${local_port}
 
 # Remove the old one if exist
-container_matched=`docker ps -q -f name=${container_name} | wc -l`
-[ $container_matched -eq 1 ] && docker rm -f ${container_name}
+docker ps -a | grep -q ${container_name}
 
-CONTAINER_ID=$(docker run --privileged \
+[ $? -eq 0 ] && docker rm -f ${container_name}
+
+CONTAINER_ID=$(docker run -d --privileged \
 		--name ${container_name} \
+                ${lab_portmap} \
                 ${lab_caps} \
                 ${lab_devices} \
                 ${lab_limits} \
-                -d -p $local_port:$remote_port \
-                -v $local_lab_dir:$remote_lab_dir \
+                ${lab_volumemap} \
                 $IMAGE)
 
 echo "LOG: Wait for lab launching..."
