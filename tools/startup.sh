@@ -8,9 +8,9 @@ PASS=ubuntu
 # echo "Username: ubuntu Password: $PASS"
 id -u ubuntu &>/dev/null || useradd --create-home --shell /bin/bash --user-group --groups adm,sudo ubuntu
 
-sudo -u ubuntu mkdir /home/ubuntu/Desktop/
+sudo mkdir /home/ubuntu/Desktop/
 sudo cp /markdown-lab.desktop /home/ubuntu/Desktop/
-sudo chown ubuntu:ubuntu /home/ubuntu/Desktop/markdown-lab.desktop
+sudo chown ubuntu:ubuntu -R /home/ubuntu/
 
 echo "ubuntu:$PASS" | chpasswd
 sudo -u ubuntu -i bash -c "mkdir -p /home/ubuntu/.config/pcmanfm/LXDE/ \
