@@ -26,6 +26,7 @@ VNC_PASS=$(< $LAB_VNC_PWD)
 [ -z "$UNIX_PASS" ] && UNIX_PASS=`pwgen -c -n -1 10` && echo $UNIX_PASS > $LAB_UNIX_PWD
 [ -z "$VNC_PASS" ] && VNC_PASS=`pwgen -c -n -1 10` && echo $VNC_PASS > $LAB_VNC_PWD
 sudo chown ubuntu:ubuntu $LAB_UNIX_PWD $LAB_VNC_PWD
+sudo chmod a+w $LAB_UNIX_PWD $LAB_VNC_PWD
 
 echo "Username: ubuntu Password: $UNIX_PASS VNC-Password: $VNC_PASS"
 
