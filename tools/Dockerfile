@@ -51,11 +51,19 @@ RUN gem install showterm
 
 RUN apt-get install -y chromium-browser
 
+# Chinese support
+RUN apt-get install -y ibus ibus-sunpinyin dbus-x11
+RUN apt-get install -y terminator
+RUN apt-get install -y fonts-arphic-bkai00mp fonts-arphic-bsmi00lp
+RUN apt-get install -y fonts-arphic-gbsn00lp fonts-arphic-gkai00mp
+RUN apt-get install -y fonts-arphic-ukai fonts-arphic-uming
+
 # Allow ubuntu user use sudo without password
 ADD sudoers.d/ubuntu /etc/sudoers.d/
 RUN chmod 440 /etc/sudoers.d/ubuntu
 
 # Add shortcuts on Desktop
+ADD autostart /etc/xdg/lxsession/LXDE/autostart
 ADD lab.desktop /
 ADD help.desktop /
 ADD startup.sh /
