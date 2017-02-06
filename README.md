@@ -3,6 +3,8 @@
 
 This lab aims to easier the building of the markdown environment for slides, books, resume and articles.
 
+![Markdown Lab Demo](images/markdown-lab-demo.jpg)
+
 ## Download
 
     $ git clone https://github.com/tinyclub/markdown-lab.git
