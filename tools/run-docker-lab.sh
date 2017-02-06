@@ -67,7 +67,7 @@ echo $pwd
 unix_pwd=`echo $pwd | sed -e "s/.* Password: \([^ ]*\) .*/\1/g"`
 vnc_pwd=`echo $pwd | sed -e "s/.* VNC-Password: \(.*\)$/\1/g"`
 
-echo $CONTAINER_ID > $TOP_DIR/.lab_container_id
+echo ${CONTAINER_ID:0:12} > $TOP_DIR/.lab_container_id
 echo $local_port > $TOP_DIR/.lab_local_port
 echo $unix_pwd > $TOP_DIR/.lab_unix_pwd
 echo $vnc_pwd > $TOP_DIR/.lab_login_pwd
