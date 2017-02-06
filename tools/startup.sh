@@ -7,6 +7,7 @@ DISABLE_UNIX_PWD=1
 IMAGE=$(< /lab-name)
 HOME=/home/ubuntu/
 DESKTOP=$HOME/Desktop/
+LAB_UID=$(< /lab-uid)
 
 LAB_NAME=`basename ${IMAGE}`
 LAB_TOOLS=/$LAB_NAME/tools/
@@ -14,7 +15,7 @@ LAB_UNIX_PWD=$LAB_TOOLS/.lab_unix_pwd
 LAB_VNC_PWD=$LAB_TOOLS/.lab_login_pwd
 
 # create an ubuntu user
-id -u ubuntu &>/dev/null || useradd --create-home --shell /bin/bash --user-group --groups adm,sudo ubuntu
+id -u ubuntu &>/dev/null || useradd --uid $LAB_UID --create-home --shell /bin/bash --user-group --groups adm,sudo ubuntu
 
 sudo mkdir $DESKTOP
 sudo cp /lab.desktop $DESKTOP/${LAB_NAME}.desktop
