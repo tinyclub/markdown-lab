@@ -49,6 +49,9 @@ RUN chmod 440 /etc/sudoers.d/ubuntu
 ADD markdown-lab.desktop /
 ADD startup.sh /
 
+# Tune the screen size
+ADD supervisord.conf /etc/supervisor/conf.d/
+
 WORKDIR /markdown-lab/
 
 EXPOSE 22
