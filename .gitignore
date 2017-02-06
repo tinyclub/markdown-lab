@@ -9,3 +9,5 @@
 *.bbl
 *.blg
 *.vrb
+*.rej
+*.orig
