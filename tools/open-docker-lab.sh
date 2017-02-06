@@ -15,6 +15,8 @@ LAB_VNC_PWD=$TOP_DIR/.lab_login_pwd
 
 WEB_BROWSER=$1
 [ -z "$WEB_BROWSER" ] && WEB_BROWSER=chromium-browser
+which $WEB_BROWSER 2>&1 >/dev/null
+[ $? -eq 1 ] && WEB_BROWSER=firefox
 
 # Get login port
 local_port=6080
@@ -31,7 +33,12 @@ pwd=ubuntu
 LAB_DESKTOP_SHORTCUT=~/Desktop/${lab_name}.desktop
 if [ -d ~/Desktop ]; then
     echo '#!/usr/bin/env xdg-open' > $LAB_DESKTOP_SHORTCUT
-    cat $TOP_DIR/lab.desktop | sed "s%Exec=.*%Exec=$browser $url%g" | sed "s%lxterminal.xpm%chromium-browser.png%g">> $LAB_DESKTOP_SHORTCUT
+    if [ "$WEB_BROWSER" == "chromium-browser" ]; then
+        icon=chromium-browser.png
+    else
+        icon=firefox.png
+    fi
+    cat $TOP_DIR/lab.desktop | sed "s%Exec=.*%Exec=$WEB_BROWSER $url%g" | sed "s%lxterminal.xpm%$icon%g">> $LAB_DESKTOP_SHORTCUT
     chmod a+x $LAB_DESKTOP_SHORTCUT
 fi
 

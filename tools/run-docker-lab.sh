@@ -117,4 +117,4 @@ echo $unix_pwd > $LAB_UNIX_PWD
 echo $vnc_pwd > $LAB_VNC_PWD
 
 # Open the lab
-$TOP_DIR/open-docker-lab.sh
+$TOP_DIR/open-docker-lab.sh $1
