@@ -29,7 +29,9 @@ CONTAINER_ID=$(docker run --privileged \
 echo "Wait for lab launching..."
 sleep 5
 
-pwd=`docker logs $CONTAINER_ID 2>/dev/null | grep Password | sed -e "s/.* Password: \(.*\)$/\1/g"`
+docker logs $CONTAINER_ID 2>/dev/null | grep Password
+
+pwd=`docker logs $CONTAINER_ID 2>/dev/null | grep Password | sed -e "s/.* VNC-Password: \(.*\)$/\1/g"`
 
 echo $local_port > $TOP_DIR/.lab_local_port
 echo $pwd > $TOP_DIR/.lab_login_pwd
