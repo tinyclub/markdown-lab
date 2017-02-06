@@ -1,4 +1,4 @@
-% Ftrace 实现原理和产品开发实践
+% Ftrace 实现原理和开发实践
 % 吴章金 @ 魅族科技
 % \today
 
@@ -6,7 +6,11 @@
 
 ## Linux tracing overview
 
-## Ftrace itself
+\ThisCenterWallPaper{1}{images/tracing}
+
+## Ftrace overview
+
+\ThisCenterWallPaper{1}{images/ftrace}
 
 # Ftrace 实现原理
 
@@ -14,7 +18,7 @@
 
 以 MIPS 为例：`arch/mips/kernel/mcount.S`
 
-* `gcc -pg`
+* KFT: `gcc -pg`
 
 ```
     $ echo 'main(){}' | \
@@ -23,7 +27,7 @@
 	jal	_mcount
 ```
 
-* `gcc -finstrument-functions`
+* Ftrace: `gcc -finstrument-functions`
 
 ```
     $ echo 'main(){}' | \
@@ -55,8 +59,7 @@
         * 记录，劫持并模拟enter：`ftrace_push_return_trace`
     * `return_to_handler`
         * 用于劫持原有的返回地址
-        * 然后调用 `ftrace_return_to_handler`
-            * 模拟exit：`ftrace_pop_return_trace`
+        * 然后调用 `ftrace_return_to_handler`，并模拟exit：`ftrace_pop_return_trace`
         * 恢复原来的返回地址并跳回
 
 ## High resolution trace clock: `sched_clock`
@@ -70,7 +73,7 @@
     * 不能溢出
         * 32 位转 64 位：`include/linux/cnt32_to_63.h: cnt32_to_63()`
 
-* notrace
+* notrace: `__attribute__((no_instrument_function))`
     * 不能跟踪，否则会死循环
     * `_mcount() -> sched_clock() -> _mcount()`
 
@@ -80,19 +83,29 @@
 * 实例：Systrace
     * atrace_init_once()
         * `atrace_marker_fd = open("/sys/kernel/debug/tracing/trace_marker", O_WRONLY);`
-    * `ATRACE_BEGIN(name)/ATRACE_END()` 写 `trace_marker`
+    * Java: `Trace.traceBegin(tag, name)/Trace.traceEnd(tag)`
+    * Native: `ATRACE_BEGIN(name)/ATRACE_END()`
     * `ATRACE_BEGIN(name)`
         * `snprintf(buf, ATRACE_MESSAGE_LENGTH, "B|%d|%s", getpid(), name);`
         * `write(atrace_marker_fd, buf, len);`
     * `ATRACE_END()`
-        * `char c = 'E'; write(atrace_marker_fd, &c, 1);`
+        * `char c = 'E';`
+        * `write(atrace_marker_fd, &c, 1);`
 
-# Ftrace 产品开发实践
+## More
+
+* KFT: Normal buffer
+
+* Ftrace: Ring buffer
+    * trace_pipe
+
+# Ftrace 开发实践
 
 ## Latency v.s. throughput
 
 * Latency tracing
-    * irqsoff tracer: 用于跟踪系统延迟
+    * cyclictest：长时间跑+后台负载，测试latency
+    * irqsoff tracer：用于跟踪引起延迟的原因
     * `echo irqsoff > /sys/kernel/debug/tracing/current_tracer`
 
 * Max Latency：+10ms
@@ -100,7 +113,8 @@
     * 观察后发现是 `dwc3_interrupt()` 没有线程化
 
 * 中断线程化
-    * 增加 `dwc3_thread_interrupt()`，数据延迟到此处理
+    * 增加 `dwc3_thread_interrupt()`
+    * 数据延迟经 `cylictest` 验证较为稳定
     * 参照 [drivers/usb/dwc3/gadget.c](http://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/plain/drivers/usb/dwc3/gadget.c) 线程化
 
 * Latency 消失，但造成 Throughput 衰退
@@ -108,13 +122,128 @@
     * 线程化前：91／72
     * 线程化后：45／39
 
-## Graphic perf tuning
+## Home Idle tracing for power jitter
 
-## Power/Thermal/Network tracing
+* top: process level
+* perf top: function level
+* Ftrace workqueue event tracer: workqueue function level
+```
+$ echo workqueue:workqueue_queue_work > /sys/kernel/debug/tracing/set_event
+$ cat /sys/kernel/debug/tracing/trace
+```
+* 实时监测数据流与快捷捕获后台数据
+    * 软件示波器：[oscilloscope](https://github.com/tinyclub/tinydraw/raw/master/oscope/oscilloscope.py)
+    * 快捷按键捕获后台数据
+    * 根据某个触发条件自动捕获：Max, Avg
 
-## CPUIdle tracing
+## Home idle tracing (Cont.)
 
-## Filesystem tracing
+\ThisCenterWallPaper{1}{images/power-supply}
+
+## Home idle tracing (Cont.)
+
+\ThisCenterWallPaper{1}{images/oscilloscope}
+
+## Filesystem tracing for broken symlink
+
+* 问题：F2FS 某个符号链接偶尔创建异常导致系统启动失败
+    * 符号链接文件存在，但是指向为空
+* 排查：排查是所有链接异常还是单一情况
+    * 通过 `trace_printk` 跟踪并经 `/sys/kernel/debug/tracing/trace` 查看
+    * fs/f2fs/namei.c:
+```
+    err = f2fs_add_link(dentry, inode);
+    if (err)
+        goto out;
+    trace_printk("dir ino %ld, target name %s, sym name %s.\n", \
+        dir->i_ino, dentry->d_name.name, symname);
+    f2fs_unlock_op(sbi);
+```
+* 结论：发现其他符号链接创建正常
+* 根源：异常掉电导致符号链接创建不完整并且无 f2fsck 无覆盖此类情况
+
+## Graphic tracing for display performance tuning
+
+* 从应用层加跟踪点
+
+```
+Trace.traceBegin(Trace.TRACE_TAG_VIEW, "performaTraversals");
+performTraversals();
+Trace.traceEnd(Trace.TRACE_TAG_VIEW);
+```
+
+* 通过 Systrace 启动跟踪
+
+```
+$ systrace.py --time=10 -o trace.html sched gfx view wm
+```
+
+* 分析跟踪结果
+    * 通过 Chrome 浏览器解析 `trace.html`
+
+## Graphic perf tuning (Cont.)
+
+\ThisCenterWallPaper{1.45}{images/systrace-graphic}
+
+## Thermal tracing for board temprature control
+
+* 从内核中定义跟踪点（tracepoints）
+    * `include/trace/events/thermal.h`
+```
+    TRACE_EVENT(thermal_temperature,
+        ...
+        TP_printk("thermal_zone=%s id=%d temp_prev=%d temp=%d",
+            __get_str(thermal_zone), __entry->id, __entry->temp_prev,
+            __entry->temp)
+);
+```
+
+* 从内核中调用跟踪点
+    * `driver/thermal/thermal_core.c: update_temperature()`
+```
+    trace_thermal_temperature(tz);
+```
+
+* Systrace 工作目标
+
+```   
+$ systrace.py --time=10 -o trace.html temp sched gfx
+```
+
+## Thermal tracing (Cont.)
+
+* 在 atrace 中启用该事件
+    * `frameworks/native/cmds/atrace/atrace.cpp: k_categories`
+```
+{ "temp", "Thermal temperature", 0, {
+{ REQ, "/sys/kernel/debug/tracing/events/thermal/thermal_temperature/enable" },}},
+```
+
+* 在 Systrace 中解析
+    * 需要增加专门的解析代码
+        * 或修改 `script.js`
+        * 或添加独立的解析文件 `thermal_parser.html` 并追加到 `ftrace_importer.html`
+        * `thermalTemperatureEvent: function()`:`
+```
+// js 正则表达式提取 ftrace thermal 相关数据
+var event = /thermal_zone=(.+) id=(\d) temp_prev=(\d+) temp=(\d+)/.exec(eventBase.details);
+// 拿到thermal zone 名字
+var name = event[1];
+// 拿到温度
+var thermalTemperature = parseInt(event[4]);
+// 调用 Systrace 框架提供的显示函数画出温度曲线；
+this.thermalTemperatureSlice(ts, name, thermalTemperature);
+```
+    * 并绑定上述事件到解析代码
+        * `function ThermalParser(importer)`
+```
+  importer.registerEventHandler('thermal_temperature',
+    ThermalParser.prototype.thermalTemperatureEvent.bind(this));
+```
+
+## Thermal tracing (Cont.)
+
+\ThisCenterWallPaper{1}{images/systrace-temp}
 
 # Ftrace 在线演示
 
@@ -208,3 +337,20 @@
        11889     1066      0.0 decode_configs                   cpu_probe
        14418     1851      0.0 cpu_probe                        setup_arch
 ```
+
+# 相关参考资料
+
+--------------------
+
+* [KFT](http://elinux.org/Using_Kernel_Function_Trace)
+* [Ftrace](http://www.ibm.com/developerworks/cn/linux/l-cn-ftrace/index.html)
+* [Trace-cmd/Kernelshark](https://lwn.net/Articles/410200/)
+* [Pytimerchart](http://packages.python.org/pytimechart/userguide.html)
+* [Systrace](https://developer.android.com/studio/profile/systrace.html)
+* [Kprobes](http://www-users.cs.umn.edu/~boutcher/kprobes/)
+* [Djprobe](https://www.kernel.org/doc/ols/2007/ols2007v1-pages-189-200.pdf)
+* [SystemTap](http://elinux.org/System_Tap)
+* [Perf](http://www.brendangregg.com/perf.html)
+* [Oprofile](http://oprofile.sourceforge.net/doc/internals/index.html)
+* [LTTng](http://lttng.org/docs/) 
+* [Oscilloscope](http://tinylab.org/oscilloscope-realtime-rendering-software-oscilloscope-data-streams/)
