@@ -10,11 +10,13 @@ IMAGE=$(< $TOP_DIR/lab-name)
 LAB_HOST_TOOL=$TOP_DIR/run-local-host.sh
 LAB_CAPS=$TOP_DIR/lab-caps
 LAB_DEVICES=$TOP_DIR/lab-devices
+LAB_LIMITS=$TOP_DIR/lab-limits
 
 lab_name=`basename ${IMAGE}`
 local_lab_dir=`dirname $TOP_DIR`
 remote_lab_dir=/$lab_name/
 
+LAB_CONTAINER_NAME=$TOP_DIR/.lab_container_name
 LAB_CONTAINER_ID=$TOP_DIR/.lab_container_id
 LAB_LOCAL_PORT=$TOP_DIR/.lab_local_port
 LAB_UNIX_PWD=$TOP_DIR/.lab_unix_pwd
@@ -81,10 +83,15 @@ if [ -f $LAB_DEVICES  ]; then
   done
 fi
 
+[ -f $LAB_LIMITS ] && lab_limits=$(< $LAB_LIMITS)
+
+container_name=${lab_name}-${local_port}
+
 CONTAINER_ID=$(docker run --privileged \
-		--name ${lab_name}-${local_port} \
+		--name ${container_name} \
                 ${lab_caps} \
                 ${lab_devices} \
+                ${lab_limits} \
                 -d -p $local_port:$remote_port \
                 -v $local_lab_dir:$remote_lab_dir \
                 $IMAGE)
@@ -97,13 +104,14 @@ do
     [ -n "$pwd" ] && break
 done
 
-echo "LOG: Container: ${CONTAINER_ID:0:12} $pwd"
+echo "LOG: Container: ${CONTAINER_ID:0:12} / $container_name $pwd"
 
 unix_pwd=`echo $pwd | sed -e "s/.* Password: \([^ ]*\) .*/\1/g"`
 vnc_pwd=`echo $pwd | sed -e "s/.* VNC-Password: \(.*\)$/\1/g"`
 
 # Save the lab's information
 echo ${CONTAINER_ID:0:12} > $LAB_CONTAINER_ID
+echo $container_name > $LAB_CONTAINER_NAME
 echo $local_port > $LAB_LOCAL_PORT
 echo $unix_pwd > $LAB_UNIX_PWD
 echo $vnc_pwd > $LAB_VNC_PWD
