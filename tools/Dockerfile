@@ -37,6 +37,7 @@ RUN npm install gitbook-plugin-disqus -g
 RUN npm install gitbook-plugin-google_code_prettify -g
 RUN npm install gitbook-plugin-collapsible-menu -g
 RUN npm install gitbook-plugin-maxiang -g
+RUN npm install gitbook-plugin-multipart -g
 
 # RUN gitbook fetch latest
 
