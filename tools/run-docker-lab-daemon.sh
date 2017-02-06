@@ -20,7 +20,7 @@ do
     echo "new vnc port: $local_port"
 
     # Make sure it is unique
-    ports=`docker ps -a | grep -v PORTS | cut -d':' -f2 | cut -d'-' -f1 | grep "[0-9]*" | tr '\n' ' '`
+    ports=`docker ps -a | grep -v PORTS | grep ":" | cut -d':' -f2 | cut -d'-' -f1 | grep "[0-9]*" | tr '\n' ' '`
     echo "old vnc ports: $ports"
 
     for port in $ports
