@@ -1,172 +1,210 @@
-% Markdown+Beamer+Pandoc 幻灯片模板
-% 吴章金 @ 泰晓科技 | TinyLab.org
+% Ftrace 实现原理和产品开发实践
+% 吴章金 @ 魅族科技
 % \today
 
-# 准备环境
+# 什么是 Ftrace
 
-## 下载该模板
+## Linux tracing overview
 
-    $ git clone https://github.com/tinyclub/markdown-lab.git
-    $ cd slides/
+## Ftrace itself
 
-## 安装 pandoc
+# Ftrace 实现原理
 
-- 以 Ubuntu 为例
+## Ftrace function tracer footstone: -pg
 
-    $ sudo apt-get install pandoc
+以 MIPS 为例：`arch/mips/kernel/mcount.S`
 
-- 其他平台
-
-    请参考 [pandoc 首页](http://johnmacfarlane.net/pandoc/installing.html)
-
-## 安装 Latex 以及中文支持
-
-- 以 Ubuntu 为例
+* `gcc -pg`
 
 ```
-    $ sudo apt-get install texlive-xetex \
-        texlive-latex-recommended \
-        texlive-latex-extra \
-        texlive-fonts-recommended \
-        texlive-fonts-extra \
-        latex-cjk-common latex-cjk-chinese \
-        latex-cjk-chinese-arphic-bkai00mp \
-        latex-cjk-chinese-arphic-bsmi00lp \
-        latex-cjk-chinese-arphic-gbsn00lp \
-        latex-cjk-chinese-arphic-gkai00mp
+    $ echo 'main(){}' | \
+      mipsel-linux-gnu-gcc -x c -S -o - - -pg | grep mcount
+	subu	$sp,$sp,8		# _mcount pops 2 words from  stack
+	jal	_mcount
 ```
 
-## 安装 Beamer
-
-- 以 Ubuntu 为例
+* `gcc -finstrument-functions`
 
 ```
-    $ sudo apt-get install latex-beamer
+    $ echo 'main(){}' | \
+      mipsel-linux-gnu-gcc -x c -S -o - - \
+      -finstrument-functions | egrep "enter\)|exit\)"
+	lw	$25,%call16(__cyg_profile_func_enter)($28)
+	lw	$25,%call16(__cyg_profile_func_exit)($28)
 ```
 
-- 相关用法与实例
+## Dynamic function tracing
+
+以 MIPS 为例：`arch/mips/kernel/ftrace.c`
+
+* 编译阶段
+    * `scripts/recordmcount.{pl,c}` 扫描所有 `.text` 中的 `mcount` 调用点并创建`__mcount_loc` 段
+
+* 引导阶段
+    * 调用 `ftrace_process_locs` 把所有 `mcount` 调用点替换为 nop 指令：`ftrace_make_nop()`
+
+* 跟踪阶段
+    * 调用 `ftrace_run_update_code`，替换回 `mcount` 调用点：`ftrace_make_call()`
+
+## Function Graph tracer
+
+* 模拟实现 `__cyg_profile_func_exit`
+
+* 在 `_mcount` 中记录、劫持并恢复函数返回地址
+    * `prepare_ftrace_return`
+        * 记录，劫持并模拟enter：`ftrace_push_return_trace`
+    * `return_to_handler`
+        * 用于劫持原有的返回地址
+        * 然后调用 `ftrace_return_to_handler`
+            * 模拟exit：`ftrace_pop_return_trace`
+        * 恢复原来的返回地址并跳回
+
+## High resolution trace clock: `sched_clock`
+
+* `sched_clock` 要求
+    * 高精度：`us/ns`
+        * `kernel/sched_clock.c` 定义的 `sched_clock` 基于 `jiffies`，精度不够
+    * 快速高效
+        * 无锁，直接读硬件计数器，X86：`rdtsc/rdtscll`，MIPS: `read_c0_count()`
+        * `Cycles` 转 `ns` 算法优化：`arch/x86/include/asm/timer.h`
+    * 不能溢出
+        * 32 位转 64 位：`include/linux/cnt32_to_63.h: cnt32_to_63()`
+
+* notrace
+    * 不能跟踪，否则会死循环
+    * `_mcount() -> sched_clock() -> _mcount()`
+
+## User space tracing
+
+* 可通过 `trace_marker` 模拟实现应用程序跟踪
+* 实例：Systrace
+    * atrace_init_once()
+        * `atrace_marker_fd = open("/sys/kernel/debug/tracing/trace_marker", O_WRONLY);`
+    * `ATRACE_BEGIN(name)/ATRACE_END()` 写 `trace_marker`
+    * `ATRACE_BEGIN(name)`
+        * `snprintf(buf, ATRACE_MESSAGE_LENGTH, "B|%d|%s", getpid(), name);`
+        * `write(atrace_marker_fd, buf, len);`
+    * `ATRACE_END()`
+        * `char c = 'E'; write(atrace_marker_fd, &c, 1);`
+
+# Ftrace 产品开发实践
+
+## Latency v.s. throughput
+
+* Latency tracing
+    * irqsoff tracer: 用于跟踪系统延迟
+    * `echo irqsoff > /sys/kernel/debug/tracing/current_tracer`
+
+* Max Latency：+10ms
+    * 主要延迟在 USB driver: `dwc3_interrupt()` 中
+    * 观察后发现是 `dwc3_interrupt()` 没有线程化
+
+* 中断线程化
+    * 增加 `dwc3_thread_interrupt()`，数据延迟到此处理
+    * 参照 [drivers/usb/dwc3/gadget.c](http://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/plain/drivers/usb/dwc3/gadget.c) 线程化
+
+* Latency 消失，但造成 Throughput 衰退
+    * 发现 RNDIS 下降明显
+    * 线程化前：91／72
+    * 线程化后：45／39
+
+## Graphic perf tuning
+
+## Power/Thermal/Network tracing
+
+## CPUIdle tracing
+
+## Filesystem tracing
+
+# Ftrace 在线演示
+
+## Linux Lab 介绍
+
+* 基于 Qemu 的嵌入式 Linux 开发环境
+* 首页：<http://tinylab.org/linux-lab>
+* 仓库：<https://github.com/tinyclub/linux-lab>
+* 特性
+    * Docker 容器化
+    * 可通过 Web 访问的 LXDE Desktop（基于noVNC）
+    * 预安装 4 大架构的交叉编译器
+    * 集成 Uboot, Linux Kernel, Buildroot
+    * 支持大量 Qemu 虚拟的开发板
+    * 灵活配置、编译和引导
+
+## Linux Lab 介绍（Cont.）
+
+\ThisCenterWallPaper{1.0}{images/linux-lab}
+
+## Online Ftrace Demo
+
+* Doc: doc/ftrace
+
+* Linux Lab Host
 
 ```
-    $ ls /usr/share/doc/latex-beamer/
-    beameruserguide.pdf.gz
-    examples
-    solutions
+    $ make list             # List supported boards
+    $ make BOARD=malta boot
 ```
 
-## 安装字体
+* Qemu Malta Board
 
 ```
-    $ sudo apt-get install \
-        fonts-arphic-bkai00mp \
-        fonts-arphic-bsmi00lp \
-        fonts-arphic-gbsn00lp \
-        fonts-arphic-gkai00mp \
-        ttf-wqy-microhei \
-        ttf-wqy-zenhei \
-        ttf-mscorefonts-installer
+    # tools/trace.sh function_graph "ls -l"
+    # head -15 trace.log
+
+    # tracer: function_graph
+    #
+    # CPU  DURATION                  FUNCTION CALLS
+    # |     |   |                     |   |   |   |
+     0)               |          unlock_page() {
+     0)   0.541 us    |            page_waitqueue();
+     0)   0.584 us    |            __wake_up_bit();
+     0) + 16.333 us   |          }
 ```
 
-## 配置字体
+## Online KFT Demo
 
-- 列出可选字体
 
-```
-    $ fc-list | egrep "wqy|AR"
-```
+* Doc: doc/kft/kft_kickstart.txt
 
-- 实例配置：需配置 zh_template.tex 如下：
+* Linux Lab Host
 
 ```
-    \setCJKmainfont{AR PL KaitiM GB} % 中文字体
+    $ scripts/feature.sh kft v2.6.36 malta
 ```
 
-# 编写幻灯
-
-## 幻灯首页
-
--   前三行分别对应
-    -   标题
-    -   作者
-    -   日期
-
-- 例如：
+* Qemu Malta Board
 
 ```
-    % Markdown+Beamer+Pandoc 幻灯片模板
-    % 吴章金 @ 泰晓科技 | TinyLab.org
-    % \today
+    # cat /proc/kft
+    status: run id 0, primed, triggered, complete
+
+    config:
+      mode 0
+      trigger start entry start_kernel
+      trigger stop entry to_userspace
+      filter mintime 500
+      filter maxtime 0
+      logentries 100000
 ```
 
-## 幻灯正文
-
--   支持如下语法
-    - [Markdown 基本语法](http://wowubuntu.com/markdown/)
-    - [Pandoc Markdown 语法](http://johnmacfarlane.net/pandoc/demo/example9/pandocs-markdown.html)
-    - Latex 语法：[1](http://www.maths.tcd.ie/~dwilkins/LaTeXPrimer/),[2](http://latex-project.org/guides/)
-
--   实例
+## Online KFT Demo (Cont.)
 
 ```
-    # In the morning
-
-    ## Getting up
-
-    - Turn off alarm
-    - Get out of bed
+    # cat /proc/kft_data
+     Entry    Delta     PID        Function                        Caller
+    -------- -------- -------- ----------------                 ------------
+         686      876      0.0 start_kernel                     rest_init
+        4954      717      0.0 clockevents_register_notifier    start_kernel
+        6589     4913      0.0 printk                           start_kernel
+        6663     4780      0.0 vprintk                          printk
+        7128     1606      0.0 vscnprintf                       vprintk
+        7208     1433      0.0 vsnprintf                        vscnprintf
+        9437      583      0.0 vprintk                          printk
+       10090     1198      0.0 release_console_sem              vprintk
+       11687     4712      0.0 cpu_probe                        setup_arch
+       11789     2419      0.0 cpu_probe                        setup_arch
+       11855     2007      0.0 decode_configs                   cpu_probe
+       11889     1066      0.0 decode_configs                   cpu_probe
+       14418     1851      0.0 cpu_probe                        setup_arch
 ```
-
-# 格式转换
-
-## 生成 pdf
-
-- 利用该模板
-
-```
-    $ make pdf & make read
-```
-
-- 原生命令
-
-```
-    pandoc -t beamer --toc \
-        -V theme:Darmstadt \
-        -V fontsize:9pt \
-        slides.md -o slides.pdf \
-        --latex-engine=xelatex \
-        --template=./templates/zh_template.tex
-```
-
-## 生成 html
-
-- 利用该模板
-
-```
-   $ make html & make read-html
-```
-
-- 原始命令
-
-```
-    pandoc -t dzslides -s --mathjax \
-        slides.md -o slides.html
-```
-
-# 参考资料
-
-------------------
-
-- [Write Beamer or Html slide using Markdown and Pandoc](https://github.com/herrkaefer/herrkaefer.github.io/blob/master/_posts/2013-12-17-write-beamer-or-html-slide-using-markown-and-pandoc.markdown)
-- [Producing slide shows with pandoc](http://johnmacfarlane.net/pandoc/README.html#producing-slide-shows-with-pandoc)
-- [Free High Quality Images](https://pixabay.com)
-
-# 致谢
-
-------------------
-
-<p align="center"><img src="images/thanks.jpg" style="height:600px" /></p>
-
-# ?
-
-------------------
-
-<p align="center"><img src="images/question.jpg" style="height:600px" /></p>
