@@ -1,22 +1,26 @@
 #!/bin/bash
 #
-# install-docker-lab.sh -- need to run with sudo
+# install-docker-lab.sh -- Build the docker image for the lab
+#
+# ref: https://docs.docker.com/engine/installation/linux/ubuntulinux/
 #
 
 TOP_DIR=$(dirname `readlink -f $0`)
 
-IMAGE=$(< ${TOP_DIR}/lab-name)
+IMAGE=$(< $TOP_DIR/lab-name)
 
 docker_without_sudo=0
 groups $USER | grep -q docker
 [ $? -eq 0 ] && docker_without_sudo=1
 
+# Make sure docker is installed
 which docker 2>&1 > /dev/null
 if [ $? -eq 1 ]; then
     sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
     version=`sed -n -e "/ main/p" /etc/apt/sources.list | grep -v ^# | head -1 | cut -d' ' -f3`
     sudo bash -c 'echo "deb https://apt.dockerproject.org/repo ubuntu-'${version}' main" > /etc/apt/sources.list.d/docker.list'
     sudo apt-get -y update
+    sudo apt-get -y install apt-transport-https ca-certificates
     sudo apt-get -y --force-yes install docker-engine
     sudo usermod -aG docker $USER
 
@@ -34,15 +38,12 @@ EOF'
 
 fi
 
+# Build the lab
 sudo docker build -t $IMAGE $TOP_DIR/
 
+# Note: Let docker without sudo, please restart X.
 [ $docker_without_sudo -eq 1 ] && exit 0
 
-echo -e "\nNote: To let docker work without sudo, add $USER to docker group and restart the X session please.\n"
-
 sure='n'
-read -p '* Restart X to make sure docker work without sudo (Y/n): ' sure
-
-if [ "$sure" = 'Y' -o "$sure" = 'y' ]; then
-    sudo pkill X
-fi
+read -p 'LOG: Restart X to let docker work without sudo (Y/n): ' sure
+[ "$sure" = 'Y' -o "$sure" = 'y' ] && sudo pkill X

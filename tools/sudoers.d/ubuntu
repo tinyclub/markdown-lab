@@ -1,1 +1,1 @@
-ubuntu ALL=(ALL) NOPASSWD: ALL
+ubuntu ALL=(ALL) NOPASSWD: NONE
