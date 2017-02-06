@@ -25,6 +25,8 @@ DOCKER_OPTS="\$DOCKER_OPTS --dns 8.8.8.8 --dns 8.8.4.4"
 DOCKER_OPTS="\$DOCKER_OPTS --bip=10.66.33.10/24"
 # DOCKER HACK END 789527394722
 EOF'
+    # Restart to make sure the above opts work
+    sudo /etc/init.d/docker restart
 
 fi
 
