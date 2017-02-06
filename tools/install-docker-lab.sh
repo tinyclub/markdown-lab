@@ -7,6 +7,10 @@ TOP_DIR=$(dirname `readlink -f $0`)
 
 IMAGE=$(< ${TOP_DIR}/lab-name)
 
+docker_without_sudo=0
+groups $USER | grep -q docker
+[ $? -eq 0 ] && docker_without_sudo=1
+
 which docker 2>&1 > /dev/null
 if [ $? -eq 1 ]; then
     sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
@@ -31,6 +35,8 @@ EOF'
 fi
 
 sudo docker build -t $IMAGE $TOP_DIR/
+
+[ $docker_without_sudo -eq 1 ] && exit 0
 
 echo -e "\nNote: To let docker work without sudo, add $USER to docker group and restart the X session please.\n"
 
