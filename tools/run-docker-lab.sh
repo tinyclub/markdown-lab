@@ -87,6 +87,9 @@ fi
 
 container_name=${lab_name}-${local_port}
 
+# Remove the old one if exist
+docker rm -f ${container_name}
+
 CONTAINER_ID=$(docker run --privileged \
 		--name ${container_name} \
                 ${lab_caps} \
