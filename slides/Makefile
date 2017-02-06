@@ -22,6 +22,7 @@ toc_number_fg=violet
 toc_section_bg=white
 toc_section_fg=orange
 
+latex_fontsize=9pt
 latex_template=./templates/zh_template.tex
 
 PDFS=$(SRC:.md=.pdf)
@@ -37,7 +38,9 @@ html: $(HTML)
 %.pdf: %.md $(latex_template) $(IMGS)
 	@#sed -n ':a;1,5!{P;N;D;};N;ba' $< > tmp-$<
 	sed '/^# 致谢/,$$d' $< > $<.tmp
-	pandoc -t beamer \
+	pandoc -t beamer --toc \
+	  --latex-engine=xelatex \
+	  --template=$(latex_template) \
 	  -V titlepage_wallpaper:$(titlepage_wallpaper) \
 	  -V titlepage_titlefg:$(titlepage_titlefg) \
 	  -V titlepage_authorfg:$(titlepage_authorfg) \
@@ -46,8 +49,9 @@ html: $(HTML)
 	  -V toc_section_bg:$(toc_section_bg) \
 	  -V toc_section_fg:$(toc_section_fg) \
 	  -V colortheme:$(latex_colortheme) \
-	  -V theme:$(latex_theme) -V fontsize:9pt $<.tmp -o $@ \
-	  --toc --template=$(latex_template) --latex-engine=xelatex
+	  -V theme:$(latex_theme) \
+	  -V fontsize:$(latex_fontsize) \
+	  $<.tmp -o $@
 	rm $<.tmp
 
 %.html: %.md
