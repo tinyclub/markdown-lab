@@ -24,6 +24,7 @@ id -u ubuntu &>/dev/null || useradd --uid $UNIX_UID --create-home --shell /bin/b
 
 sudo mkdir $DESKTOP
 sudo cp /lab.desktop $DESKTOP/${LAB_NAME}.desktop
+sudo cp /help.desktop $DESKTOP/
 sudo chown ubuntu:ubuntu -R $HOME/
 
 UNIX_PASS=$(< $LAB_UNIX_PWD)
