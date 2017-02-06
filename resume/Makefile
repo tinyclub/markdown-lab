@@ -35,7 +35,7 @@ clean:
 	$(RM) *.html *.pdf
 
 read: $(PDFS)
-	firefox $^ &
+	firefox $^ 2>&1 > /dev/null &
 
 read-html: $(HTML)
-	firefox $^ &
+	firefox $^ 2>&1 > /dev/null &

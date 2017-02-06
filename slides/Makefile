@@ -58,10 +58,10 @@ html: $(HTML)
 	pandoc -t $(html_theme) -s --mathjax $< -o $@
 
 read: $(PDFS)
-	firefox $^ &
+	firefox $^ 2>&1 >/dev/null &
 
 read-html: $(HTML)
-	firefox $^
+	firefox $^ 2>&1 >/dev/null &
 
 clean:
 	rm -rf *.pdf *.html

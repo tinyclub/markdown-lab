@@ -16,7 +16,7 @@ all: clean $(PDFS)
 	  -f markdown $< -o $@
 
 read: $(PDFS)
-	firefox $^ &
+	firefox $^ 2>&1 > /dev/null &
 
 clean:
 	rm -rf *.pdf
