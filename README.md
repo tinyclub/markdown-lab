@@ -7,16 +7,20 @@ This lab aims to easier the building of the markdown environment for slides, boo
 
 ## Download
 
-    $ git clone https://github.com/tinyclub/markdown-lab.git
-    $ cd markdown-lab/
+    $ git clone https://github.com/tinyclub/cloud-lab.git
+    $ cd cloud-lab/ && tools/docker/choose markdown-lab
 
 ## Installation
 
-To install the necessary tools, try `tools/install-local-lab.sh` for local
-machine and `tools/install-docker-lab.sh` for virtual machine.
+    $ tools/docker/build # Build ourselves
+    or
+    $ tools/docker/pull # Pull from docker hub
 
-For docker machine, need to open it with `tools/run-docker-lab.sh` or
-`tools/open-docker-lab.sh` and login the VNC page with `ubuntu` password.
+    $ tools/docker/uid
+    $ tools/docker/identify
+    $ tools/docker/run
+
+Login the VNC page with `ubuntu` password.
 
 ## Slides
 
