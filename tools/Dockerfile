@@ -24,6 +24,7 @@ RUN apt-get install -y ttf-wqy-microhei ttf-wqy-zenhei #ttf-mscorefonts-installe
 # For gitbook
 
 RUN apt-get install -y nodejs npm
+RUN apt-get -y update
 RUN apt-get install -y calibre
 
 RUN npm config set registry https://registry.npm.taobao.org
