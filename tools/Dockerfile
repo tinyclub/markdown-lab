@@ -41,6 +41,14 @@ RUN npm install gitbook-plugin-multipart -g
 
 RUN gitbook fetch latest
 
+# Allow ubuntu user use sudo without password
+ADD sudoers.d/ubuntu /etc/sudoers.d/
+RUN chmod 440 /etc/sudoers.d/ubuntu
+
+# Add shortcuts on Desktop
+ADD markdown-lab.desktop /
+ADD startup.sh /
+
 WORKDIR /markdown-lab/
 
 EXPOSE 22
