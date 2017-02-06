@@ -56,3 +56,8 @@ To specify the fonts, please open `templates/header.tex` and configure the
 
 To specify the fonts, please open `book.jason` and configure the
 `fontFamily` with the fonts you want in the result of `fc-list`.
+
+## References
+
+* [Markdown 基本语法](http://wowubuntu.com/markdown/)
+* [Pandoc's Markdown 语法](http://johnmacfarlane.net/pandoc/demo/example9/pandocs-markdown.html)
