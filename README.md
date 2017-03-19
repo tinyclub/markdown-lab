@@ -16,7 +16,6 @@ This lab aims to easier the building of the markdown environment for slides, boo
     or
     $ tools/docker/pull # Pull from docker hub
 
-    $ tools/docker/identify
     $ tools/docker/run
 
 Login the VNC page with the password printed in the console.
