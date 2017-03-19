@@ -64,4 +64,4 @@ read-html: $(HTML)
 	(chromium-browser $^ 2>&1 > /dev/null &) 2>&1 >/dev/null
 
 clean:
-	rm -rf *.pdf *.html
+	rm -rf *.pdf *.html *.tmp
