@@ -1,3 +1,4 @@
 [submodule "book"]
 	path = book
 	url = https://github.com/tinyclub/open-shell-book.git
+	ignore = all
