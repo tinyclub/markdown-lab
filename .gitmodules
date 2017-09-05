@@ -1,3 +1,4 @@
 [submodule "book"]
 	path = book
 	url = https://github.com/tinyclub/coders-poems.git
+	ignore = all
