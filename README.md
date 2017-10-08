@@ -5,6 +5,13 @@ This lab aims to easier the building of the markdown environment for slides, boo
 
 ![Markdown Lab Demo](images/markdown-lab-demo.jpg)
 
+## Prepare
+
+Please install docker at first:
+
+* Linux and Mac OSX: [Docker CE](https://store.docker.com/search?type=edition&offering=community)
+* Windows: [Docker Toolbox](https://www.docker.com/docker-toolbox)
+
 ## Download
 
     $ git clone https://github.com/tinyclub/cloud-lab.git
