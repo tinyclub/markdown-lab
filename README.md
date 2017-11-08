@@ -97,7 +97,6 @@ To specify the fonts, please open `templates/header.tex` and configure the
 
     $ git submodule update --init book
     $ cd book/
-    $ gitbook install
     $ make
 
 To specify the fonts, please open `book.jason` and configure the
