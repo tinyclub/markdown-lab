@@ -308,7 +308,7 @@
 
 * Linux Lab Host
 
-        $ make test FEATURE=kft LINUX=v2.6.36 BOARD=malta TEST=kernel-prepare
+        $ make test FEATURE=kft LINUX=v2.6.36 BOARD=malta TEST=prepare
 
 * Qemu Malta Board
 
