@@ -48,7 +48,7 @@ For Linux or Mac OSX, please simply choose one directory in `~/Downloads` or `~/
 
 ## Download
 
-    $ git clone https://github.com/tinyclub/cloud-lab.git
+    $ git clone https://gitee.com/tinylab/cloud-lab.git
     $ cd cloud-lab/ && tools/docker/choose markdown-lab
 
 ## Installation
