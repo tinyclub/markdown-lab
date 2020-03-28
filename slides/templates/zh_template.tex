@@ -10,7 +10,21 @@ $endif$
 \setbeamertemplate{navigation symbols}{}
 \useoutertheme{shadow}
 \setbeamertemplate{headline}{}
-\setbeamertemplate{footline}{}
+% \setbeamertemplate{footline}{}
+\setbeamertemplate{footline}{%
+  \leavevmode%
+  \hbox{%
+    \begin{beamercolorbox}[wd=.126\paperwidth,ht=2.25ex,dp=1ex,right]{footcolor}%
+       \insertframenumber{} / \inserttotalframenumber\hspace*{5ex}
+    \end{beamercolorbox}
+    \begin{beamercolorbox}[wd=.530\paperwidth,ht=2.25ex,dp=1ex,right]{footcolor}%
+       $if(pagefoot)$\textcolor{red}{$pagefoot$}$endif$
+    \end{beamercolorbox}
+    \begin{beamercolorbox}[wd=.300\paperwidth,ht=2.25ex,dp=1ex,right]{footcolor}%
+       \insertauthor\hspace*{5ex}
+    \end{beamercolorbox}}%
+  \vskip0pt%
+}
 
 % Customize tableofcontent
 $if(toc_number_bg)$
