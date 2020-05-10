@@ -101,7 +101,7 @@
 
 -   支持如下语法
     - [Markdown 基本语法](https://www.markdownguide.org/basic-syntax)
-    - [Pandoc Markdown 语法](http://johnmacfarlane.net/pandoc/demo/example9/pandocs-markdown.html)
+    - [Pandoc Markdown 语法](https://pandoc.org/MANUAL.html#pandocs-markdown)
     - Latex 语法：[1](http://www.maths.tcd.ie/~dwilkins/LaTeXPrimer/),[2](http://latex-project.org/guides/)
 
 -   实例
@@ -155,7 +155,6 @@
 
 ------------------
 
-- [Write Beamer or Html slide using Markdown and Pandoc](https://github.com/herrkaefer/herrkaefer.github.io/blob/master/_posts/2013-12-17-write-beamer-or-html-slide-using-markown-and-pandoc.markdown)
 - [Producing slide shows with pandoc](http://johnmacfarlane.net/pandoc/README.html#producing-slide-shows-with-pandoc)
 - [Free High Quality Images](https://pixabay.com)
 
