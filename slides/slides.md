@@ -100,7 +100,7 @@
 ## 幻灯正文
 
 -   支持如下语法
-    - [Markdown 基本语法](http://wowubuntu.com/markdown/)
+    - [Markdown 基本语法](https://www.markdownguide.org/basic-syntax)
     - [Pandoc Markdown 语法](http://johnmacfarlane.net/pandoc/demo/example9/pandocs-markdown.html)
     - Latex 语法：[1](http://www.maths.tcd.ie/~dwilkins/LaTeXPrimer/),[2](http://latex-project.org/guides/)
 

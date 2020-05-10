@@ -104,5 +104,5 @@ To specify the fonts, please open `book.jason` and configure the
 
 ## References
 
-* [Markdown 基本语法](http://wowubuntu.com/markdown/)
+* [Markdown 基本语法](https://www.markdownguide.org/basic-syntax)
 * [Pandoc's Markdown 语法](http://johnmacfarlane.net/pandoc/demo/example9/pandocs-markdown.html)
