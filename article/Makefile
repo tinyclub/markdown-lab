@@ -1,8 +1,11 @@
 
 SRC = $(wildcard *.md)
 PDFS=$(SRC:.md=.pdf)
-LATEX_TEMPLATE=./templates/default.latex
+LATEX_TEMPLATE=./templates/default.tex
 LATEX_HEADER=./templates/header.tex
+
+# pygments / kate /monochrome /espresso /haddock /tango /zenburn
+HIGHLIGHT_STYLE ?= espresso
 
 pdf: clean $(PDFS)
 
@@ -13,6 +16,7 @@ all: clean $(PDFS)
 	  --latex-engine=xelatex \
 	  --template=$(LATEX_TEMPLATE) \
 	  -H $(LATEX_HEADER) \
+	  --highlight-style $(HIGHLIGHT_STYLE) \
 	  -f markdown $< -o $@
 
 read: $(PDFS)

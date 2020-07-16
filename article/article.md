@@ -37,34 +37,63 @@
 
 ## 表格用法
 
-  | 篇数  | 作者  |
-  |------:|:------|
-  |   24 | test1 |
-  |    6 | test2 |
-  |    5 | test3 |
-  |    4 | test4 |
-  |    4 | test5 |
-  |    3 | test6 |
-  |    2 | test7 |
-  |    2 | test8 |
-  |    2 | test9 |
-  |    1 | test10|
-  |    1 | test11|
+| 篇数 | 作者  |
+|-----:|:------|
+|   24 | test1 |
+|    6 | test2 |
+|    5 | test3 |
+|    4 | test4 |
+|    4 | test5 |
+|    3 | test6 |
+|    2 | test7 |
+|    2 | test8 |
+|    2 | test9 |
+|    1 | test10|
+|    1 | test11|
 
 ## 命令用法
 
 - 结果统计与排序
 
-	cat doc.md | grep "^-" | sort | uniq -c | sort -k1 -g -r
+```bash
+$ cat doc.md | grep "^-" | sort | uniq -c | sort -k1 -g -r
+```
 
 - 文档生成
 
-    pandoc -f markdown doc.md -o doc.pdf
-		--toc -N --latex-engine=xelatex -V mainfont="WenQuanYi Micro Hei"
+```bash
+$ pandoc -f markdown doc.md -o doc.pdf
+	--toc -N --latex-engine=xelatex -V mainfont="WenQuanYi Micro Hei"
+```
 
 ## 文本内命令
 
 这里是文本内的 `command`。
+
+## 代码块
+
+### Python 代码
+
+```python
+# Reversing a string using slicing
+
+my_string = "ABCDE"
+reversed_string = my_string[::-1]
+print(reversed_string)
+
+# Output
+# EDCBA
+```
+
+### Java 代码
+
+```Java
+public class Hello {
+    public static void main(String[] args) {
+        System.out.println("Hello, world!");
+    }
+}
+```
 
 ## 上标/脚注
 

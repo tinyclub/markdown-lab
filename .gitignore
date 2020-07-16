@@ -12,3 +12,4 @@
 *.rej
 *.orig
 *.tmp
+*.DS_store
