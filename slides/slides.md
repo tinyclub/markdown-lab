@@ -6,14 +6,18 @@
 
 ## 下载该模板
 
-    $ git clone https://github.com/tinyclub/markdown-lab.git
-    $ cd slides/
+```bash
+$ git clone https://github.com/tinyclub/markdown-lab.git
+$ cd slides/
+```
 
 ## 安装 pandoc
 
 - 以 Ubuntu 为例
 
-    $ sudo apt-get install pandoc
+```bash
+$ sudo apt-get install pandoc
+```
 
 - 其他平台
 
@@ -23,61 +27,61 @@
 
 - 以 Ubuntu 为例
 
-```
-    $ sudo apt-get install texlive-xetex \
-        texlive-latex-recommended \
-        texlive-latex-extra \
-        texlive-fonts-recommended \
-        texlive-fonts-extra \
-        latex-cjk-common latex-cjk-chinese \
-        latex-cjk-chinese-arphic-bkai00mp \
-        latex-cjk-chinese-arphic-bsmi00lp \
-        latex-cjk-chinese-arphic-gbsn00lp \
-        latex-cjk-chinese-arphic-gkai00mp
+```bash
+$ sudo apt-get install texlive-xetex \
+    texlive-latex-recommended \
+    texlive-latex-extra \
+    texlive-fonts-recommended \
+    texlive-fonts-extra \
+    latex-cjk-common latex-cjk-chinese \
+    latex-cjk-chinese-arphic-bkai00mp \
+    latex-cjk-chinese-arphic-bsmi00lp \
+    latex-cjk-chinese-arphic-gbsn00lp \
+    latex-cjk-chinese-arphic-gkai00mp
 ```
 
 ## 安装 Beamer
 
 - 以 Ubuntu 为例
 
-```
-    $ sudo apt-get install latex-beamer
+``` bash
+$ sudo apt-get install latex-beamer
 ```
 
 - 相关用法与实例
 
-```
-    $ ls /usr/share/doc/latex-beamer/
-    beameruserguide.pdf.gz
-    examples
-    solutions
+``` bash
+$ ls /usr/share/doc/latex-beamer/
+beameruserguide.pdf.gz
+examples
+solutions
 ```
 
 ## 安装字体
 
-```
-    $ sudo apt-get install \
-        fonts-arphic-bkai00mp \
-        fonts-arphic-bsmi00lp \
-        fonts-arphic-gbsn00lp \
-        fonts-arphic-gkai00mp \
-        ttf-wqy-microhei \
-        ttf-wqy-zenhei \
-        ttf-mscorefonts-installer
+```bash
+$ sudo apt-get install \
+    fonts-arphic-bkai00mp \
+    fonts-arphic-bsmi00lp \
+    fonts-arphic-gbsn00lp \
+    fonts-arphic-gkai00mp \
+    ttf-wqy-microhei \
+    ttf-wqy-zenhei \
+    ttf-mscorefonts-installer
 ```
 
 ## 配置字体
 
 - 列出可选字体
 
-```
-    $ fc-list | egrep "wqy|AR"
+```bash
+$ fc-list | egrep "wqy|AR"
 ```
 
-- 实例配置：需配置 zh_template.tex 如下：
+- 实例配置：需配置 `zh_template.tex` 如下：
 
-```
-    \setCJKmainfont{AR PL KaitiM GB} % 中文字体
+```latex
+\setCJKmainfont{AR PL KaitiM GB} % 中文字体
 ```
 
 # 编写幻灯
@@ -91,10 +95,10 @@
 
 - 例如：
 
-```
-    % Markdown+Beamer+Pandoc 幻灯片模板
-    % 吴章金 @ 泰晓科技 | TinyLab.org
-    % \today
+```latex
+% Markdown+Beamer+Pandoc 幻灯片模板
+% 吴章金 @ 泰晓科技 | TinyLab.org
+% \today
 ```
 
 ## 幻灯正文
@@ -106,13 +110,13 @@
 
 -   实例
 
-```
-    # In the morning
+```markdown
+# In the morning
 
-    ## Getting up
+## Getting up
 
-    - Turn off alarm
-    - Get out of bed
+- Turn off alarm
+- Get out of bed
 ```
 
 # 格式转换
@@ -121,34 +125,34 @@
 
 - 利用该模板
 
-```
-    $ make pdf & make read
+```bash
+$ make pdf & make read
 ```
 
 - 原生命令
 
-```
-    pandoc -t beamer --toc \
-        -V theme:Darmstadt \
-        -V fontsize:9pt \
-        slides.md -o slides.pdf \
-        --latex-engine=xelatex \
-        --template=./templates/zh_template.tex
+```bash
+$ pandoc -t beamer --toc \
+    -V theme:Darmstadt \
+    -V fontsize:9pt \
+    slides.md -o slides.pdf \
+    --latex-engine=xelatex \
+    --template=./templates/zh_template.tex
 ```
 
 ## 生成 html
 
 - 利用该模板
 
-```
-   $ make html & make read-html
+```bash
+$ make html & make read-html
 ```
 
 - 原始命令
 
-```
-    pandoc -t dzslides -s --mathjax \
-        slides.md -o slides.html
+```bash
+$ pandoc -t dzslides -s --mathjax \
+	slides.md -o slides.html
 ```
 
 # 参考资料

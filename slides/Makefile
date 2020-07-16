@@ -25,6 +25,9 @@ toc_section_fg=orange
 latex_fontsize=9pt
 latex_template=./templates/zh_template.tex
 
+# pygments / kate /monochrome /espresso /haddock /tango /zenburn
+highlight_style ?= espresso
+
 PDFS=$(SRC:.md=.pdf)
 HTML=$(SRC:.md=.html)
 IMGS=$(wildcard images/*.jpg)
@@ -51,6 +54,7 @@ html: $(HTML)
 	  -V colortheme:$(latex_colortheme) \
 	  -V theme:$(latex_theme) \
 	  -V fontsize:$(latex_fontsize) \
+	  --highlight-style $(highlight_style)\
 	  $<.tmp -o $@
 	rm $<.tmp
 
