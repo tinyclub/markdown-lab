@@ -22,6 +22,10 @@ toc_number_fg=violet
 toc_section_bg=white
 toc_section_fg=orange
 
+# link-color
+LINK_COLOR = Cyan
+
+
 latex_fontsize=9pt
 latex_template=./templates/zh_template.tex
 
@@ -55,6 +59,7 @@ html: $(HTML)
 	  -V theme:$(latex_theme) \
 	  -V fontsize:$(latex_fontsize) \
 	  --highlight-style $(highlight_style)\
+	  -V colorlinks -V urlcolor=$(LINK_COLOR) \
 	  $<.tmp -o $@
 	rm $<.tmp
 

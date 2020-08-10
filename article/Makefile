@@ -6,6 +6,8 @@ LATEX_HEADER=./templates/header.tex
 
 # pygments / kate /monochrome /espresso /haddock /tango /zenburn
 HIGHLIGHT_STYLE ?= espresso
+# link-color
+LINK_COLOR = Cyan
 
 pdf: clean $(PDFS)
 
@@ -17,6 +19,7 @@ all: clean $(PDFS)
 	  --template=$(LATEX_TEMPLATE) \
 	  -H $(LATEX_HEADER) \
 	  --highlight-style $(HIGHLIGHT_STYLE) \
+	  -V colorlinks -V urlcolor=$(LINK_COLOR) \
 	  -f markdown $< -o $@
 
 read: $(PDFS)

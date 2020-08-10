@@ -8,6 +8,8 @@ LATEX_TEMPLATE=./templates/default.latex
 LATEX_HEADER=./templates/header.tex
 HTML_CSS=./templates/resume.css
 
+LINK_COLOR = Green
+
 all:    clean $(PDFS) $(HTML)
 
 pdf:   clean $(PDFS)
@@ -21,6 +23,7 @@ html:  clean $(HTML)
 	python resume.py tex < $< \
 	  | pandoc --latex-engine=xelatex \
 	      --template=$(LATEX_TEMPLATE) \
+		  -V colorlinks -V urlcolor=$(LINK_COLOR)\
 	      -H $(LATEX_HEADER) -o $@
 
 ifeq ($(OS),Windows_NT)
