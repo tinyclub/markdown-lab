@@ -66,6 +66,21 @@ $endif$
     \usepackage[utf8]{inputenc}
   \fi
 \fi
+
+\usepackage{tikz} %加⽔印⽤
+\usepackage{eso-pic}
+
+\newcommand\BackgroundPicture{%
+  \put(0,0){%
+    \parbox[b][\paperheight]{\paperwidth}{%
+      \vfill
+      \centering%
+      \begin{tikzpicture}[remember picture,overlay]
+      \node [rotate=60,scale=5,text opacity=0.02] at (current page.center) {markdown-lab}; %中括号内是旋转角度，字体大小
+      \end{tikzpicture}%
+      \vfill
+    }}}
+
 $if(natbib)$
 \usepackage{natbib}
 \bibliographystyle{plainnat}
@@ -112,6 +127,7 @@ $endif$
   \let\sectionname\relax
   \frame{\sectionpage}
 }
+
 $if(strikeout)$
 \usepackage[normalem]{ulem}
 % avoid problems with \sout in headers with hyperref:
@@ -149,6 +165,8 @@ $endif$
 \setbeamercolor{background canvas}{bg=}
 
 \begin{document}
+
+
 $if(title)$
 \begin{frame}[plain]
 $if(titlepage_wallpaper)$
@@ -156,6 +174,9 @@ $if(titlepage_wallpaper)$
 $endif$
 % Insert background picture for titlepage
 %\titlepage
+
+
+\AddToShipoutPicture{\BackgroundPicture}
 
  \begin{center}
     \vskip3.2cm\par

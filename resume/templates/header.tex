@@ -8,6 +8,20 @@
 %  \setmonofont{Ubuntu Mono}
 \fi
 
+\usepackage{tikz} %加⽔印⽤
+\usepackage{eso-pic}
+
+\newcommand\BackgroundPicture{%
+  \put(0,0){%
+    \parbox[b][\paperheight]{\paperwidth}{%
+      \vfill
+      \centering%
+      \begin{tikzpicture}[remember picture,overlay]
+      \node [rotate=60,scale=5,text opacity=0.02] at (current page.center) {markdown-lab}; %中括号内是旋转角度，字体大小
+      \end{tikzpicture}%
+      \vfill
+    }}}
+
 \usepackage{titlesec}
 \titleformat{\section}{\huge\bfseries}{\thesection}{1em}{}
 \titlespacing{\section}{0pt}{-2em}{1em}

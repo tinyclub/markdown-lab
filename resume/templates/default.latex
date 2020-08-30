@@ -165,6 +165,9 @@ $abstract$
 \end{abstract}
 $endif$
 
+% For water-mark
+\AddToShipoutPicture{\BackgroundPicture}
+
 $for(include-before)$
 $include-before$
 
