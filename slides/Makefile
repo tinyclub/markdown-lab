@@ -25,6 +25,10 @@ toc_section_fg=orange
 # link-color
 LINK_COLOR = Cyan
 
+# encryption: empty to disable, nonempty to enable
+ENCRYPT ?=
+OWNERPW ?= test
+USERPW  ?= test
 
 latex_fontsize=9pt
 latex_template=./templates/zh_template.tex
@@ -61,10 +65,11 @@ html: $(HTML)
 	  -V colortheme:$(latex_colortheme) \
 	  -V theme:$(latex_theme) \
 	  -V fontsize:$(latex_fontsize) \
-	  -V CJKmainfont='$(CJKmainfont)'\
-	  -V mainfont='$(mainfont)'\
+	  -V CJKmainfont:'$(CJKmainfont)'\
+	  -V mainfont:'$(mainfont)'\
 	  --highlight-style $(highlight_style)\
-	  -V colorlinks -V urlcolor=$(LINK_COLOR) \
+	  -V colorlinks -V urlcolor:$(LINK_COLOR) \
+	  $(if $(ENCRYPT),-V encrypt:$(ENCRYPT) -V ownerpw:$(OWNERPW) -V userpw:$(USERPW)) \
 	  $<.tmp -o $@
 	rm $<.tmp
 
