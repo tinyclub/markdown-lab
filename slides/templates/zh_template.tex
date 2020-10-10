@@ -1,3 +1,4 @@
+$if(encrypt)$\special{pdf:encrypt ownerpw ($ownerpw$) userpw ($userpw$) length 128 perm 2052}$endif$
 \documentclass[$if(fontsize)$$fontsize$,$endif$$if(handout)$handout,$endif$$if(beamer)$ignorenonframetext,$endif$$if(urlcolor)$xcolor={dvipsnames,svgnames*,x11names*}$endif$]{$documentclass$}
 $if(theme)$
 \usetheme{$theme$}
@@ -46,7 +47,7 @@ $endif$
 \usepackage{ifxetex,ifluatex}
 \usepackage{fixltx2e} % provides \textsubscript
 \ifxetex
-  \usepackage{xeCJK}                 % 设置中英文字体
+  \usepackage[BoldFont,SlantFont]{xeCJK}                 % 设置中英文字体
   $if(CJKmainfont)$
     \setCJKmainfont{$CJKmainfont$}   % 中文字体
   $endif$
