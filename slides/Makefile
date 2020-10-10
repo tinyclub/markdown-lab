@@ -36,6 +36,9 @@ PDFS=$(SRC:.md=.pdf)
 HTML=$(SRC:.md=.html)
 IMGS=$(wildcard images/*.jpg)
 
+CJKmainfont = AR PL SungtiL GB
+mainfont = AR PL SungtiL GB
+
 all: clean $(PDFS) $(HTML)
 
 pdf: $(PDFS)
@@ -58,6 +61,8 @@ html: $(HTML)
 	  -V colortheme:$(latex_colortheme) \
 	  -V theme:$(latex_theme) \
 	  -V fontsize:$(latex_fontsize) \
+	  -V CJKmainfont='$(CJKmainfont)'\
+	  -V mainfont='$(mainfont)'\
 	  --highlight-style $(highlight_style)\
 	  -V colorlinks -V urlcolor=$(LINK_COLOR) \
 	  $<.tmp -o $@

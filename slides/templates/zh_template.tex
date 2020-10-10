@@ -47,8 +47,12 @@ $endif$
 \usepackage{fixltx2e} % provides \textsubscript
 \ifxetex
   \usepackage{xeCJK}                 % 设置中英文字体
-  \setCJKmainfont{AR PL KaitiM GB}   % 中文字体
-  \setmainfont{AR PL SungtiL GB}     % 英文字体
+  $if(CJKmainfont)$
+    \setCJKmainfont{$CJKmainfont$}   % 中文字体
+  $endif$
+  $if(mainfont)$
+    \setmainfont{$mainfont$}
+  $endif$
 %  \setromanfont{Latin Modern Roman}
 %  \setmonofont{Ubuntu Mono}
   \linespread{1.2}\selectfont        % 行距
