@@ -8,7 +8,15 @@ LATEX_TEMPLATE=./templates/default.latex
 LATEX_HEADER=./templates/header.tex
 HTML_CSS=./templates/resume.css
 
-LINK_COLOR = Green
+LINK_COLOR ?= Green
+
+# encryption: empty to disable, nonempty to enable
+ENCRYPT ?=
+OWNERPW ?= $(ENCRYPT)
+USERPW  ?= $(ENCRYPT)
+ifneq ($(OWNERPW)$(USERPW), $(ENCRYPT))
+  ENCRYPT := $(OWNERPW)$(USERPW)
+endif
 
 all:    clean $(PDFS) $(HTML)
 
@@ -23,8 +31,11 @@ html:  clean $(HTML)
 	python resume.py tex < $< \
 	  | pandoc --latex-engine=xelatex \
 	      --template=$(LATEX_TEMPLATE) \
-		  -V colorlinks -V urlcolor=$(LINK_COLOR)\
-	      -H $(LATEX_HEADER) -o $@
+		-V colorlinks -V urlcolor=$(LINK_COLOR)\
+		$(if $(ENCRYPT),-V encrypt:$(ENCRYPT) -V ownerpw:$(OWNERPW) -V userpw:$(USERPW)) \
+		$(if $(WATERMARK),-V watermark:$(WATERMARK)) \
+		-H $(LATEX_HEADER) \
+		-o $@
 
 ifeq ($(OS),Windows_NT)
   # on Windows

@@ -1,3 +1,4 @@
+$if(encrypt)$\special{pdf:encrypt ownerpw ($ownerpw$) userpw ($userpw$) length 128 perm 2052}$endif$
 \documentclass[$if(fontsize)$$fontsize$,$endif$$if(lang)$$lang$,$endif$$if(papersize)$$papersize$,$endif$$for(classoption)$$classoption$$sep$,$endfor$]{$documentclass$}
 $if(fontfamily)$
 \usepackage{$fontfamily$}
@@ -155,6 +156,23 @@ $endfor$
 \renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
 \fi
 
+$if(watermark)$
+\usepackage{tikz} %加⽔印⽤
+\usepackage{eso-pic}
+
+\newcommand\BackgroundPicture{%
+  \put(0,0){%
+    \parbox[b][\paperheight]{\paperwidth}{%
+      \vfill
+      \centering%
+      \begin{tikzpicture}[remember picture,overlay]
+      \node [rotate=60,scale=5,text opacity=0.05] at (current page.center) {$watermark$}; %中括号内是旋转角度，字体大小
+      \end{tikzpicture}%
+      \vfill
+    }}}
+$endif$
+
+
 \begin{document}
 $if(title)$
 \maketitle
@@ -165,8 +183,10 @@ $abstract$
 \end{abstract}
 $endif$
 
+$if(watermark)$
 % For water-mark
 \AddToShipoutPicture{\BackgroundPicture}
+$endif$
 
 $for(include-before)$
 $include-before$
