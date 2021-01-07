@@ -23,7 +23,7 @@ toc_section_bg=white
 toc_section_fg=orange
 
 # link-color
-LINK_COLOR = Cyan
+LINK_COLOR ?= Cyan
 
 # encryption: empty to disable, nonempty to enable
 ENCRYPT ?=
