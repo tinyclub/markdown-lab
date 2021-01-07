@@ -27,8 +27,11 @@ LINK_COLOR = Cyan
 
 # encryption: empty to disable, nonempty to enable
 ENCRYPT ?=
-OWNERPW ?= test
-USERPW  ?= test
+OWNERPW ?= $(ENCRYPT)
+USERPW  ?= $(ENCRYPT)
+ifneq ($(OWNERPW)$(USERPW), $(ENCRYPT))
+  ENCRYPT := $(OWNERPW)$(USERPW)
+endif
 
 latex_fontsize=9pt
 latex_template=./templates/zh_template.tex
