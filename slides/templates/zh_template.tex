@@ -72,6 +72,7 @@ $endif$
   \fi
 \fi
 
+$if(watermark)$
 \usepackage{tikz} %加⽔印⽤
 \usepackage{eso-pic}
 
@@ -81,10 +82,11 @@ $endif$
       \vfill
       \centering%
       \begin{tikzpicture}[remember picture,overlay]
-      \node [rotate=60,scale=5,text opacity=0.02] at (current page.center) {markdown-lab}; %中括号内是旋转角度，字体大小
+      \node [rotate=60,scale=5,text opacity=0.05] at (current page.center) {$watermark$}; %中括号内是旋转角度，字体大小
       \end{tikzpicture}%
       \vfill
     }}}
+$endif$
 
 $if(natbib)$
 \usepackage{natbib}
@@ -181,7 +183,9 @@ $endif$
 %\titlepage
 
 
+$if(watermark)$
 \AddToShipoutPicture{\BackgroundPicture}
+$endif$
 
  \begin{center}
     \vskip3.2cm\par

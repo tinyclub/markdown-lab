@@ -73,6 +73,7 @@ html: $(HTML)
 	  --highlight-style $(highlight_style)\
 	  -V colorlinks -V urlcolor:$(LINK_COLOR) \
 	  $(if $(ENCRYPT),-V encrypt:$(ENCRYPT) -V ownerpw:$(OWNERPW) -V userpw:$(USERPW)) \
+	  $(if $(WATERMARK),-V watermark:$(WATERMARK)) \
 	  $<.tmp -o $@
 	rm $<.tmp
 
