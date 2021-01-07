@@ -38,7 +38,6 @@ Markdow 文档撰写环境，支持幻灯片、书籍、简历和文章。
     $ make WATERMARK=markdown-lab
 
     // 加密，设置相同加密密码
-
     $ make ENCRYPT=markdown-lab
 
     // 加密作者和读者设置不同加密密码
